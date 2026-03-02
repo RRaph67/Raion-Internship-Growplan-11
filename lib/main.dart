@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/presentation/pages/homePage.dart';
-import 'package:flutter_application_1/presentation/pages/loginPage.dart';
-import 'package:flutter_application_1/presentation/pages/regisPage.dart';
+import 'package:flutter_application_1/presentation/auth/cubit/auth_cubit.dart';
+import 'package:flutter_application_1/presentation/auth/pages/login_page.dart';
+import 'package:flutter_application_1/presentation/auth/pages/register_page.dart';
+import 'package:flutter_application_1/presentation/home/home_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -19,15 +21,32 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'GrowPlan',
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => const LogIn(),
-        '/regis': (context) => const SignUp(),
-        '/home': (context) => const HomePage(),
-      },
+    return BlocProvider(
+      create: (context) => AuthCubit(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'GrowPlan',
+        initialRoute: '/login',
+        routes: {
+          '/login': (context) => const LogIn(),
+          '/regis': (context) => const SignUp(),
+          '/home': (context) => const HomePage(),
+        },
+      ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     debugShowCheckedModeBanner: false,
+  //     title: 'GrowPlan',
+  //     initialRoute: '/login',
+  //     routes: {
+  //       '/login': (context) => const LogIn(),
+  //       '/regis': (context) => const SignUp(),
+  //       '/home': (context) => const HomePage(),
+  //     },
+  //   );
+  // }
 }

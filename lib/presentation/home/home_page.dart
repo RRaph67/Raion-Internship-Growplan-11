@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/presentation/pages/loginPage.dart';
+import 'package:flutter_application_1/presentation/auth/pages/login_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,11 +20,14 @@ class _HomePageState extends State<HomePage> {
     _getUserInfo();
   }
 
-  void _getUserInfo() {
+void _getUserInfo() {
     final user = supabase.auth.currentUser;
+
     if (user != null) {
+      final metadata = user.userMetadata ?? {};
+
       setState(() {
-        _username = user.userMetadata?['username'] as String;
+        _username = metadata['name']?.toString();
       });
     }
   }
