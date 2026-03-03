@@ -7,7 +7,6 @@ import 'package:flutter_application_1/presentation/auth/widgets/password_page.da
 import 'package:flutter_application_1/presentation/home/home_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class LogIn extends StatefulWidget {
   const LogIn({super.key});
 
@@ -110,7 +109,7 @@ class _LogInState extends State<LogIn> {
                           ),
                         ),
                         SizedBox(height: 5),
-                        
+
                         CustomField(
                           hint: "Masukan Email",
                           controller: _emailCont,
@@ -151,7 +150,7 @@ class _LogInState extends State<LogIn> {
                           },
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Forgot Password
                         Align(
                           alignment: Alignment.centerRight,
@@ -171,7 +170,7 @@ class _LogInState extends State<LogIn> {
                         ),
 
                         const SizedBox(height: 36),
-                         AuthButton(
+                        AuthButton(
                           emailController: _emailCont,
                           passwordController: _passwordCont,
                           buttonContent: BlocConsumer<AuthCubit, AuthState>(
@@ -185,7 +184,6 @@ class _LogInState extends State<LogIn> {
                                   ),
                                 );
                               }
-
                               if (state is AuthSuccess) {
                                 Navigator.pushReplacement(
                                   context,
@@ -218,47 +216,6 @@ class _LogInState extends State<LogIn> {
                             );
                           },
                         ),
-
-                        // SizedBox(
-                        //   width: double.infinity,
-                        //   height: 55,
-                        //   child: ElevatedButton(
-                        //     style: ElevatedButton.styleFrom(
-                        //       backgroundColor: Color(
-                        //         0xFF508C1D,
-                        //       ), // hijau konsisten
-                        //       foregroundColor: Colors.white,
-                        //       textStyle: const TextStyle(
-                        //         fontSize: 16,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.circular(
-                        //           50,
-                        //         ), // radius sama dengan form
-                        //       ),
-                        //     ),
-                        //     onPressed: _isLoading ? null : _signIn,
-                        //     child: _isLoading
-                        //         ? const SizedBox(
-                        //             width: 24,
-                        //             height: 24,
-                        //             child: CircularProgressIndicator(
-                        //               strokeWidth: 2,
-                        //               color: Colors.white,
-                        //             ),
-                        //           )
-                        //         : const Text(
-                        //             'Masuk',
-                        //             style: TextStyle(
-                        //               fontSize: 16,
-                        //               fontWeight: FontWeight.bold,
-                        //               color: Colors.white,
-                        //             ),
-                        //           ),
-                        //   ),
-                        // ),
-
                         const SizedBox(height: 24),
                         Align(
                           alignment: Alignment.center,
@@ -294,6 +251,20 @@ class _LogInState extends State<LogIn> {
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+
+          Positioned(
+            bottom: 490, // posisikan tepat di atas container
+            left: 0,
+            right: 0,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Image.asset(
+                'assets/Group 36698.png',
+                width: 117,
+                height: 109,
               ),
             ),
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/presentation/auth/cubit/auth_cubit.dart';
+import 'package:flutter_application_1/presentation/auth/pages/forgot_password_page.dart';
 import 'package:flutter_application_1/presentation/auth/pages/login_page.dart';
 import 'package:flutter_application_1/presentation/auth/pages/register_page.dart';
 import 'package:flutter_application_1/presentation/home/home_page.dart';
@@ -31,22 +32,9 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LogIn(),
           '/regis': (context) => const SignUp(),
           '/home': (context) => const HomePage(),
+          '/forgot': (context) => const ForgotPasswordPage(),
         },
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     debugShowCheckedModeBanner: false,
-  //     title: 'GrowPlan',
-  //     initialRoute: '/login',
-  //     routes: {
-  //       '/login': (context) => const LogIn(),
-  //       '/regis': (context) => const SignUp(),
-  //       '/home': (context) => const HomePage(),
-  //     },
-  //   );
-  // }
 }

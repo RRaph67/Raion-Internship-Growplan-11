@@ -18,4 +18,6 @@ class AuthFailure extends AuthState {
 
 class AuthEmailSent extends AuthState {}
 
+class SendEmailForgotPassword extends AuthState {}
+
 class PasswordRecovery extends AuthState {}

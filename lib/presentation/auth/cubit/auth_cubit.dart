@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/models/user_model.dart';
 part 'auth_state.dart';
@@ -76,5 +77,28 @@ class AuthCubit extends Cubit<AuthState> {
   // LOGOUT
   Future<void> logout() async {
     await _client.auth.signOut();
+  }
+
+   Future<void> sendEmailForgotPassword(String email) async {
+    emit(AuthLoading());
+
+    try {
+      await _client.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'io.supabase.malangventure://auth-callback',
+      );
+      emit(SendEmailForgotPassword());
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
+    }
+  }
+
+  Future<void> updatePassword(String newPassword) async {
+    emit(AuthLoading());
+    try {
+      await _client.auth.updateUser(UserAttributes(password: newPassword));
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
+    }
   }
 }

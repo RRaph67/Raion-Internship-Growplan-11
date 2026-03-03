@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/const/icons_const.dart';
 import 'package:flutter_application_1/presentation/auth/pages/login_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -10,6 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int myIndex = 0;
   final supabase = Supabase.instance.client;
   String? _username;
   bool _isLoading = false;
@@ -20,7 +22,7 @@ class _HomePageState extends State<HomePage> {
     _getUserInfo();
   }
 
-void _getUserInfo() {
+  void _getUserInfo() {
     final user = supabase.auth.currentUser;
 
     if (user != null) {
@@ -62,14 +64,6 @@ void _getUserInfo() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('GrowPlan'),
-        elevation: 0,
-        backgroundColor: const Color(0xFF6ABA27),
-        foregroundColor: Colors.white,
-        automaticallyImplyLeading: false, // <--- hilangkan tombol back
-      ),
-
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(24.0),
@@ -129,6 +123,58 @@ void _getUserInfo() {
               ),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: myIndex,
+          onTap: (index) {
+            setState(() {
+              myIndex = index;
+            });
+          },
+          selectedItemColor: const Color(0xFF508C1D), // hijau aktif
+          unselectedItemColor: Colors.grey, // abu tidak aktif
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 12,
+          ),
+          items: [
+            BottomNavigationBarItem(
+              icon: Opacity(
+                opacity: myIndex == 0 ? 1.0 : 0.5,
+                child: Image.asset(IconConst.home, width: 24, height: 24),
+              ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Opacity(
+                opacity: myIndex == 1 ? 1.0 : 0.5,
+                child: Image.asset(IconConst.discovery, width: 24, height: 24),
+              ),
+              label: 'Discovery',
+            ),
+            BottomNavigationBarItem(
+              icon: Opacity(
+                opacity: myIndex == 2 ? 1.0 : 0.5,
+                child: Image.asset(IconConst.myPlant, width: 24, height: 24),
+              ),
+              label: 'My Plant',
+            ),
+          ],
         ),
       ),
     );

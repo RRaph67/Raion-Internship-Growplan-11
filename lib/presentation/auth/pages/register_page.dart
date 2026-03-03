@@ -34,6 +34,7 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           // Background image
@@ -65,7 +66,7 @@ class _SignUpState extends State<SignUp> {
                     blurRadius: 4,
                     offset: const Offset(0, -5),
                   ),
-                ],
+                ]
               ),
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -288,6 +289,21 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+
+          // Mid Logo 
+          Positioned(
+            bottom: 570, // posisikan tepat di atas container
+            left: 0,
+            right: 0,
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Image.asset(
+                'assets/Group 36698.png',
+                width: 117,
+                height: 109,
               ),
             ),
           ),
