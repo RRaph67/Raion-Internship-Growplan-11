@@ -4,7 +4,7 @@ import 'package:flutter_application_1/presentation/auth/cubit/auth_cubit.dart';
 import 'package:flutter_application_1/presentation/auth/widgets/auth_button.dart';
 import 'package:flutter_application_1/presentation/auth/widgets/custom_field.dart';
 import 'package:flutter_application_1/presentation/auth/widgets/password_page.dart';
-import 'package:flutter_application_1/presentation/home/home_page.dart';
+import 'package:flutter_application_1/presentation/home/pages/home_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
