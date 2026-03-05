@@ -134,7 +134,7 @@ class NewPasswordPage extends StatelessWidget {
                 ),
               ),
 
-              const Spacer(),
+              const SizedBox(height: 250),
 
               /// Button
               SizedBox(
