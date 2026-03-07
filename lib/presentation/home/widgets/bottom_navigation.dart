@@ -56,7 +56,7 @@ class CustomBottomNavBar extends StatelessWidget {
               opacity: currentIndex == 2 ? 1.0 : 0.5,
               child: Image.asset(IconConst.myPlant, width: 24, height: 24),
             ),
-            label: 'My Plant',
+            label: 'Plant Info',
           ),
         ],
       ),

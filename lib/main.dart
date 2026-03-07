@@ -34,6 +34,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent, // matikan efek overlay
+        ),
+      ),
       title: 'GrowPlan',
       initialRoute: '/login',
       routes: {
