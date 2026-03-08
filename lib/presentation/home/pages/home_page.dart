@@ -8,6 +8,11 @@ import 'package:flutter_application_1/presentation/plant_info/pages/main_plant_p
 import 'package:flutter_application_1/presentation/plant_info/widget/simple_appbar.dart';
 import 'package:flutter_application_1/presentation/profile/cubit/profile_cubit.dart';
 import 'package:flutter_application_1/presentation/profile/edit_profile.dart';
+import 'package:flutter_application_1/presentation/user_tanam/cubit/user_tanam_cubit.dart';
+import 'package:flutter_application_1/presentation/user_tanam/cubit/user_tanam_state.dart';
+import 'package:flutter_application_1/presentation/user_tanam/pages/add_user_tanam.dart';
+import 'package:flutter_application_1/presentation/user_tanam/pages/user_tanam_detail.dart';
+import 'package:flutter_application_1/presentation/user_tanam/widget/user_tanam_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -44,40 +49,66 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Halaman Home default
   Widget _buildHomePage() {
-    final List<String> todoTanaman = []; // nanti isi dari DB
-
-    if (todoTanaman.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/icons/home/belum_punya_tanaman.png',
-              width: 248,
-              height: 248,
+    return BlocBuilder<UserTanamCubit, UserTanamState>(
+      builder: (context, state) {
+        if (state is UserTanamLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is UserTanamListLoaded) {
+          final list = state.userTanamList;
+          if (list.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/icons/home/belum_punya_tanaman.png',
+                    width: 248,
+                    height: 248,
+                  ),
+                  const SizedBox(height: 34),
+                  const Text(
+                    "Yah, kamu belum memiliki tanaman",
+                    style: TextStyle(fontSize: 16, color: Colors.black45),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          }
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.8,
             ),
-            const SizedBox(height: 34),
-            const Text(
-              "Yah, kamu belum memiliki tanaman",
-              style: TextStyle(fontSize: 16, color: Colors.black45),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-    } else {
-      return ListView.builder(
-        itemCount: todoTanaman.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: const Icon(Icons.local_florist),
-            title: Text(todoTanaman[index]),
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return UserTanamCard(
+                namaTanam: item['nama_tanam'],
+                tanggalTanam: item['tanggal_tanam'],
+                imageUrl: item['image_url'],
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          UserTanamDetailPage(userTanamId: item['id']),
+                    ),
+                  );
+                },
+              );
+            },
           );
-        },
-      );
-    }
+        } else if (state is UserTanamError) {
+          return Center(child: Text("Error: ${state.message}"));
+        }
+        return const SizedBox();
+      },
+    );
   }
 
   List<Widget> get _pages => [
@@ -106,15 +137,9 @@ class _HomePageState extends State<HomePage> {
           rightIconPath: 'assets/icons/home/notifications.png',
         );
       case 1:
-        return SimpleAppBar(
-          title: "Discovery",
-          onBackTap: () => setState(() => myIndex = 0),
-        );
+        return const SimpleAppBar(title: "Discovery");
       case 2:
-        return SimpleAppBar(
-          title: "Plant Info",
-          onBackTap: () => setState(() => myIndex = 0),
-        );
+        return const SimpleAppBar(title: "Plant Info");
       default:
         return const SimpleAppBar(title: "");
     }
@@ -122,24 +147,32 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: IndexedStack(index: myIndex, children: _pages),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: myIndex,
-        onTap: (index) => setState(() => myIndex = index),
+    return BlocProvider(
+      create: (_) => UserTanamCubit()..fetchUserTanamList(),
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: IndexedStack(index: myIndex, children: _pages),
+        bottomNavigationBar: CustomBottomNavBar(
+          currentIndex: myIndex,
+          onTap: (index) => setState(() => myIndex = index),
+        ),
+        floatingActionButton: myIndex == 0
+            ? FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AddUserTanamPage()),
+                  );
+                  // refresh otomatis setelah kembali
+                  context.read<UserTanamCubit>().fetchUserTanamList();
+                },
+                backgroundColor: AppPallete.primaryNormal,
+                elevation: 4,
+                shape: const CircleBorder(),
+                child: const Icon(Icons.add, color: Colors.white),
+              )
+            : null,
       ),
-      floatingActionButton: myIndex == 0
-          ? FloatingActionButton(
-              onPressed: () {
-                // aksi tambah tanaman
-              },
-              backgroundColor: AppPallete.primaryNormal,
-              elevation: 4,
-              shape: const CircleBorder(),
-              child: const Icon(Icons.add, color: Colors.white),
-            )
-          : null,
     );
   }
 }
