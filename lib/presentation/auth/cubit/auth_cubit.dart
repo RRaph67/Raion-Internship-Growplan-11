@@ -43,6 +43,15 @@ class AuthCubit extends Cubit<AuthState> {
     return super.close();
   }
 
+  // ✅ Method baru untuk refresh auth state
+  Future<void> refreshAuthState() async {
+    try {
+      await _client.auth.refreshSession();
+    } catch (e) {
+      // Ignore error, onAuthStateChange will handle it
+    }
+  }
+
   // REGISTER
   Future<void> register(String name, String email, String password) async {
     emit(AuthLoading());
@@ -79,7 +88,7 @@ class AuthCubit extends Cubit<AuthState> {
     await _client.auth.signOut();
   }
 
-   Future<void> sendEmailForgotPassword(String email) async {
+  Future<void> sendEmailForgotPassword(String email) async {
     emit(AuthLoading());
 
     try {

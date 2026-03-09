@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/presentation/plant_info/widget/plant_card.dart';
 import 'package:flutter_application_1/presentation/plant_info/widget/side_long_card.dart';
-import 'package:flutter_application_1/presentation/plant_info/widget/simple_appbar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PlantInfo extends StatefulWidget {

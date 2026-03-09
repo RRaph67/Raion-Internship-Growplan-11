@@ -38,49 +38,57 @@ class _ImageArrowSelectorState extends State<ImageArrowSelector> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            SizedBox(
-              height: 200,
-              width: double.infinity,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  widget.imageUrls[_currentIndex],
-                  fit: BoxFit.cover,
+        SizedBox(
+          height: 112,
+          width: double.infinity, // Stack selebar layar
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // gambar di tengah
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 112,
+                  width: 144,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      widget.imageUrls[_currentIndex],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              left: 10,
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_left,
-                  size: 40,
-                  color: AppPallete.primaryNormal,
+              // tombol kiri di pojok dengan margin 32
+              Positioned(
+                left: 24,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_left,
+                    size: 48, // ukuran icon 20px
+                    color: AppPallete
+                        .primaryNormal, // atau AppPallete.primaryNormal
+                  ),
+                  onPressed: _goLeft,
                 ),
-                onPressed: _goLeft,
               ),
-            ),
-            Positioned(
-              right: 10,
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_right,
-                  size: 40,
-                  color: AppPallete.primaryDark,
+              // tombol kanan di pojok dengan margin 32
+              Positioned(
+                right: 24,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_right,
+                    size: 48, // ukuran icon 20px
+                    color:
+                        AppPallete.primaryNormal, // atau AppPallete.primaryDark
+                  ),
+                  onPressed: _goRight,
                 ),
-                onPressed: _goRight,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 12),
-        Text(
-          "Image ${_currentIndex + 1} dari ${widget.imageUrls.length}",
-          style: const TextStyle(fontSize: 14, color: Colors.black54),
-        ),
       ],
     );
   }

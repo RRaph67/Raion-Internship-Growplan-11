@@ -14,7 +14,7 @@ import 'package:flutter_application_1/presentation/user_tanam/pages/add_user_tan
 import 'package:flutter_application_1/presentation/user_tanam/pages/user_tanam_detail.dart';
 import 'package:flutter_application_1/presentation/user_tanam/widget/user_tanam_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,6 +32,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    // ✅ Panggil fetch data dari Global Provider
+    context.read<UserTanamCubit>().fetchUserTanamList();
+
     final state = context.read<AuthCubit>().state;
     if (state is AuthSuccess) {
       _getUserInfo();
@@ -147,32 +151,39 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => UserTanamCubit()..fetchUserTanamList(),
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: IndexedStack(index: myIndex, children: _pages),
-        bottomNavigationBar: CustomBottomNavBar(
-          currentIndex: myIndex,
-          onTap: (index) => setState(() => myIndex = index),
-        ),
-        floatingActionButton: myIndex == 0
-            ? FloatingActionButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const AddUserTanamPage()),
-                  );
-                  // refresh otomatis setelah kembali
-                  context.read<UserTanamCubit>().fetchUserTanamList();
-                },
-                backgroundColor: AppPallete.primaryNormal,
-                elevation: 4,
-                shape: const CircleBorder(),
-                child: const Icon(Icons.add, color: Colors.white),
-              )
-            : null,
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: BlocListener<AuthCubit, AuthState>(
+        listener: (context, state) {
+          if (state is AuthSuccess) {
+            setState(() {
+              _currentPhotoUrl = state.user.fotoProfil!;
+              _username = state.user.nama;
+            });
+          }
+        },
+        child: IndexedStack(index: myIndex, children: _pages),
       ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: myIndex,
+        onTap: (index) => setState(() => myIndex = index),
+      ),
+      floatingActionButton: myIndex == 0
+          ? FloatingActionButton(
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AddUserTanamPage()),
+                );
+                // Refresh otomatis setelah kembali
+                context.read<UserTanamCubit>().fetchUserTanamList();
+              },
+              backgroundColor: AppPallete.primaryNormal,
+              elevation: 4,
+              shape: const CircleBorder(),
+              child: const Icon(Icons.add, color: Colors.white),
+            )
+          : null,
     );
   }
 }

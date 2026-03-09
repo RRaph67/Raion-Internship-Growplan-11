@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/presentation/auth/widgets/custom_field.dart';
+import 'package:flutter_application_1/presentation/home/widgets/button_widget.dart';
 import 'package:flutter_application_1/presentation/user_tanam/cubit/user_tanam_cubit.dart';
 import 'package:flutter_application_1/presentation/user_tanam/cubit/user_tanam_state.dart';
 import 'package:flutter_application_1/presentation/user_tanam/pages/user_tanam_detail.dart';
@@ -28,42 +30,117 @@ class _UserTanamFormState extends State<UserTanamForm> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              const SizedBox(height: 82),
+
               // Carousel image selector
               ImageArrowSelector(
                 imageUrls: [
-                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icon_tnm_1.png",
-                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icon_tnm_2.png",
-                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icon_tnm_3.png",
-                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icon_tnm_4.png",
-                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icon_tnm_5.png",
-                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icon_tnm_6.png",
+                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icn_1.png",
+                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icn_2.png",
+                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icn_3.png",
+                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icn_4.png",
+                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icn_5.png",
+                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icn_6.png",
+                  "https://ykliuppxcrlhvjvynjzf.supabase.co/storage/v1/object/public/tanaman_img/icon_tanaman/icn_7.png",
                 ],
                 onChanged: (selectedUrl) {
                   _selectedImageUrl = selectedUrl;
                 },
               ),
 
-              // Dropdown kategori tanaman (jenis_tanaman unik)
+              const SizedBox(height: 82),
+              Text(
+                'Jenis Tanaman',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF305412),
+                ),
+              ),
+              // Dropdown kategori tanaman
               DropdownButtonFormField<String>(
                 value: _selectedJenis,
                 items: state.jenisList.map((jenis) {
-                  return DropdownMenuItem(value: jenis, child: Text(jenis));
+                  return DropdownMenuItem<String>(
+                    value: jenis,
+                    child: Text(
+                      jenis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color:
+                            Colors.black, // ✅ Warna teks dropdown item: hitam
+                      ),
+                    ),
+                  );
                 }).toList(),
                 onChanged: (val) => setState(() => _selectedJenis = val),
-                decoration: const InputDecoration(
-                  labelText: "Kategori Tanaman",
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF6ABA27), // ✅ Warna teks dropdown: hijau
+                ),
+                hint: const Text(
+                  "Kategori Tanaman",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF6ABA27), // ✅ Warna hint: hijau
+                  ),
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF6ABA27),
+                      width: 2,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: const BorderSide(
+                      color: Color(0xFF6ABA27),
+                      width: 1,
+                    ),
+                  ),
+                  suffixIcon: const Icon(
+                    Icons.arrow_drop_down,
+                    size: 32,
+                    color: Color(0xFF6ABA27),
+                  ),
+                ),
+                isExpanded: true,
+              ),
+
+              const SizedBox(height: 10),
+
+              Text(
+                'Nama Tanaman',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF305412),
                 ),
               ),
+              // TextField nama tanaman pakai CustomField
+              CustomField(controller: _namaController, hint: "Nama Tanaman"),
 
-              // TextField nama tanaman
-              TextField(
-                controller: _namaController,
-                decoration: const InputDecoration(labelText: "Nama Tanaman"),
+              const SizedBox(height: 10),
+
+              Text(
+                'Tanggal Menanam',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  color: Color(0xFF305412),
+                ),
               ),
-
-              // DatePicker
-              ElevatedButton(
-                onPressed: () async {
+              // Date picker pakai CustomField dengan icon calendar
+              GestureDetector(
+                onTap: () async {
                   final selectedDate = await showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
@@ -72,17 +149,27 @@ class _UserTanamFormState extends State<UserTanamForm> {
                   );
                   setState(() => _tanggalTanam = selectedDate);
                 },
-                child: Text(
-                  _tanggalTanam == null
-                      ? "Pilih Tanggal Tanam"
-                      : _tanggalTanam.toString(),
+                child: AbsorbPointer(
+                  child: CustomField(
+                    controller: TextEditingController(
+                      text: _tanggalTanam == null
+                          ? ""
+                          : "${_tanggalTanam!.day}-${_tanggalTanam!.month}-${_tanggalTanam!.year}",
+                    ),
+                    hint: "Tanggal Tanam",
+                    suffixIcon: const Icon(
+                      Icons.calendar_month,
+                      size: 20, // ✅ Ukuran sama dengan dropdown
+                      color: Color(0xFF6ABA27), // ✅ Warna sama dengan dropdown
+                    ),
+                  ),
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 32),
 
-              // Tombol submit
-              ElevatedButton(
+              // Tombol submit pakai ButtonCustom
+              ButtonCustom(
                 onPressed: () async {
                   if (_selectedJenis != null &&
                       _tanggalTanam != null &&
@@ -92,7 +179,7 @@ class _UserTanamFormState extends State<UserTanamForm> {
                       namaTanam: _namaController.text,
                       tanggalTanam: _tanggalTanam!,
                       jenisTanaman: _selectedJenis!,
-                      imageUrl: _selectedImageUrl, // tambahkan ini
+                      imageUrl: _selectedImageUrl,
                     );
 
                     if (cubit.state is UserTanamSuccess) {
@@ -108,8 +195,17 @@ class _UserTanamFormState extends State<UserTanamForm> {
                     }
                   }
                 },
-                child: const Text("Tambah"),
-              )
+                buttonContent: const Text(
+                  "Tambah",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                borderRadius: 30.0,
+                backgroundColor: const Color(0xFF508C1D),
+              ),
             ],
           );
         } else if (state is UserTanamError) {
