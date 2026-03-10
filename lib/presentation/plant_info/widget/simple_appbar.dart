@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class SimpleAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final VoidCallback? onBackTap;
+  final bool showBackButton;
 
-  const SimpleAppBar({super.key, required this.title, this.onBackTap});
+  const SimpleAppBar({
+    super.key,
+    required this.title,
+    this.onBackTap,
+    this.showBackButton = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +29,22 @@ class SimpleAppBar extends StatelessWidget implements PreferredSizeWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: onBackTap ?? () => Navigator.pop(context),
-        ),
+        // ✅ Matikan default leading otomatis dari Flutter agar tidak konflik
+        automaticallyImplyLeading: false,
+        leading: showBackButton
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  if (onBackTap != null) {
+                    // Jika ada fungsi khusus (seperti pindah tab di HomePage), jalankan itu
+                    onBackTap!();
+                  } else {
+                    // Default fallback: kembali ke halaman sebelumnya di stack Navigator
+                    Navigator.pop(context);
+                  }
+                },
+              )
+            : null,
         title: Text(
           title,
           style: const TextStyle(

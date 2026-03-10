@@ -7,6 +7,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onAvatarTap;
   final VoidCallback? onRightIconTap;
   final String rightIconPath;
+  final bool showBackButton;
 
   const CustomAppBar({
     super.key,
@@ -15,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onAvatarTap,
     this.onRightIconTap,
     required this.rightIconPath,
+    this.showBackButton = false,
   });
 
   @override
@@ -28,76 +30,85 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
-            offset: const Offset(0, -1),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: onAvatarTap,
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundImage: photoUrl != null
-                      ? NetworkImage(photoUrl!)
-                      : null,
-                  child: photoUrl == null
-                      ? const Icon(Icons.person, size: 20)
-                      : null,
-                ),
+        // ✅ Otomatis menyembunyikan leading jika showBackButton false
+        automaticallyImplyLeading: false,
+        leading: showBackButton
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
+        titleSpacing: showBackButton
+            ? 0
+            : 16, // Sesuaikan padding jika tidak ada back button
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: onAvatarTap,
+              child: CircleAvatar(
+                radius: 20,
+                backgroundImage: photoUrl != null
+                    ? NetworkImage(photoUrl!)
+                    : null,
+                child: photoUrl == null
+                    ? const Icon(Icons.person, size: 20)
+                    : null,
               ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      const Text(
-                        'Hai,',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                          color: AppPallete.primaryDarker,
-                        ),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Hai,',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: AppPallete.primaryDarker,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        username ?? "No username",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: AppPallete.primaryDarker,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Text(
-                    'Selamat menanam!',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: AppPallete.primaryDarker,
                     ),
+                    const SizedBox(width: 4),
+                    Text(
+                      username ?? "User",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppPallete.primaryDarker,
+                      ),
+                    ),
+                  ],
+                ),
+                const Text(
+                  'Selamat menanam!',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppPallete.primaryDarker,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(
               onTap: onRightIconTap,
-              child: Image.asset(rightIconPath, width: 30, height: 30),
+              child: Image.asset(rightIconPath, width: 28, height: 28),
             ),
           ),
         ],

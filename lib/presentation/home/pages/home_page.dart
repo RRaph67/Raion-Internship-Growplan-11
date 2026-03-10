@@ -16,6 +16,8 @@ import 'package:flutter_application_1/presentation/user_tanam/widget/user_tanam_
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
+// ... (imports tetap sama)
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -32,10 +34,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    // ✅ Panggil fetch data dari Global Provider
     context.read<UserTanamCubit>().fetchUserTanamList();
-
     final state = context.read<AuthCubit>().state;
     if (state is AuthSuccess) {
       _getUserInfo();
@@ -92,8 +91,8 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               final item = list[index];
               return UserTanamCard(
-                namaTanam: item['nama_tanam'],
-                tanggalTanam: item['tanggal_tanam'],
+                namaTanam: item['nama_tanam'] ?? '',
+                tanggalTanam: item['tanggal_tanam'] ?? '',
                 imageUrl: item['image_url'],
                 onTap: () {
                   Navigator.push(
@@ -139,11 +138,23 @@ class _HomePageState extends State<HomePage> {
             );
           },
           rightIconPath: 'assets/icons/home/notifications.png',
+          showBackButton: false, // Home tetap false
         );
+
       case 1:
-        return const SimpleAppBar(title: "Discovery");
+        return SimpleAppBar(
+          title: "Discovery",
+          showBackButton: true,
+          // ✅ Klik back di tab Discovery akan memindahkan user ke tab Home
+          onBackTap: () => setState(() => myIndex = 0),
+        );
       case 2:
-        return const SimpleAppBar(title: "Plant Info");
+        return SimpleAppBar(
+          title: "Plant Info",
+          showBackButton: true,
+          // ✅ Klik back di tab Plant Info akan memindahkan user ke tab Home
+          onBackTap: () => setState(() => myIndex = 0),
+        );
       default:
         return const SimpleAppBar(title: "");
     }
@@ -175,7 +186,6 @@ class _HomePageState extends State<HomePage> {
                   context,
                   MaterialPageRoute(builder: (_) => const AddUserTanamPage()),
                 );
-                // Refresh otomatis setelah kembali
                 context.read<UserTanamCubit>().fetchUserTanamList();
               },
               backgroundColor: AppPallete.primaryNormal,

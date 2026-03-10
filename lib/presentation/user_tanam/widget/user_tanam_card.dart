@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class UserTanamCard extends StatelessWidget {
+  final String? imageUrl;
   final String namaTanam;
   final String tanggalTanam;
-  final String? imageUrl;
   final VoidCallback onTap;
 
   const UserTanamCard({
@@ -19,48 +20,110 @@ class UserTanamCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 168,
+        height: 202,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6,
+              color: Colors.grey.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 5,
               offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (imageUrl != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  imageUrl!,
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.cover,
+            Expanded(
+              flex: 5,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(25),
                 ),
-              )
-            else
-              const Icon(Icons.local_florist, size: 80, color: Colors.green),
-
-            const SizedBox(height: 12),
-            Text(
-              namaTanam,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+                child: Container(
+                  margin: const EdgeInsets.all(16),
+                 child: _buildImage(context),
+                )
+              ),
             ),
-            const SizedBox(height: 6),
-            Text(
-              "Ditambahkan: $tanggalTanam",
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-              textAlign: TextAlign.center,
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            namaTanam,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            maxLines: 1,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.more_vert,
+                          size: 16,
+                          color: Colors.black,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      "$tanggalTanam",
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildImage(BuildContext context) {
+    // Cek apakah imageUrl valid (bukan null dan bukan string kosong)
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      debugPrint("UserTanamCard - No image available");
+      return const Center(
+        child: Icon(Icons.local_florist, size: 80, color: Colors.green),
+      );
+    }
+
+    // Coba load gambar
+    return Image.network(
+      imageUrl!,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: double.infinity,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Center(
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!
+                : null,
+          ),
+        );
+      },
+      errorBuilder: (context, error, stackTrace) {
+        debugPrint("UserTanamCard - Image load error: $error");
+        return const Center(
+          child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
+        );
+      },
     );
   }
 }

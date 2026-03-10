@@ -27,8 +27,11 @@ class CustomField extends StatelessWidget {
       validator: validator,
       keyboardType: keyboardType,
       obscureText: isObscured,
+      // ✅ STYLE UNTUK INPUT USER (Hitam, Font 12)
+      style: const TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
-      hintText: hint,
+        hintText: hint,
+        // ✅ STYLE UNTUK HINT (Hijau, Font 12)
         hintStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w500,

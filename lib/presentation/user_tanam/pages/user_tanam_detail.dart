@@ -1,4 +1,8 @@
+// lib/presentation/user_tanam/pages/user_tanam_detail.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/presentation/plant_info/widget/simple_appbar.dart';
+import 'package:flutter_application_1/presentation/user_tanam/widget/plant_info_widget.dart';
+import 'package:flutter_application_1/presentation/user_tanam/widget/todo_list_detail.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/user_tanam_cubit.dart';
 import '../cubit/user_tanam_state.dart';
@@ -11,7 +15,7 @@ class UserTanamDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Detail Tanaman")),
+      appBar: SimpleAppBar(title: "Detail Tanaman"),
       body: BlocProvider(
         create: (_) => UserTanamCubit()..fetchUserTanamDetail(userTanamId),
         child: BlocBuilder<UserTanamCubit, UserTanamState>(
@@ -20,52 +24,20 @@ class UserTanamDetailPage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             } else if (state is UserTanamDetailLoaded) {
               final detail = state.detail;
-              final todos = detail['todo_tanam'] as List<dynamic>;
+
+              // Mapping data todo yang lebih aman
+              final todos = _mapTodos(detail['todo_tanam']);
 
               return ListView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.only(top: 16),
                 children: [
-                  // Informasi tanaman
-                  Text(
-                    "Nama Tanaman: ${detail['nama_tanam']}",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text("Kategori: ${detail['repo_tanaman']['jenis_tanaman']}"),
-                  Text("Tanggal Tanam: ${detail['tanggal_tanam']}"),
-                  if (detail['image_url'] != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Image.network(detail['image_url']),
-                    ),
-                  const SizedBox(height: 20),
-
-                  // Todo list
-                  const Text(
-                    "Todo List:",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  ...todos.map(
-                    (todo) => Card(
-                      child: ListTile(
-                        title: Text(todo['nama_todo']),
-                        subtitle: Text(
-                          "${todo['tanggal_todo']} - ${todo['jam_todo']}",
-                        ),
-                        trailing: Text(
-                          (todo['status'] as List).isNotEmpty
-                              ? (todo['status'] as List).last
-                              : "pending",
-                          style: TextStyle(
-                            color: (todo['status'] as List).last == "done"
-                                ? Colors.green
-                                : Colors.red,
-                          ),
-                        ),
-                      ),
-                    ),
+                  PlantInfoWidget(detail: detail),
+                  const SizedBox(height: 24),
+                  TodoListWidget(
+                    todos: todos,
+                    onToggleTodo: (index) {
+                      context.read<UserTanamCubit>().toggleTodoStatus(index);
+                    },
                   ),
                 ],
               );
@@ -77,5 +49,24 @@ class UserTanamDetailPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<Map<String, dynamic>> _mapTodos(dynamic todoData) {
+    if (todoData == null) return [];
+
+    if (todoData is List) {
+      return todoData.map((todo) {
+        return {
+          'id': todo['id'] ?? 0,
+          'nama_todo': todo['nama_todo'] ?? 'Tanpa Nama',
+          'tanggal_todo': todo['tanggal_todo'] ?? '',
+          'jam_todo': todo['jam_todo'] ?? '07:00',
+          'status': todo['status'] ?? ['pending'],
+          'complete_at': todo['complete_at'] ?? null,
+        };
+      }).toList();
+    }
+
+    return [];
   }
 }
