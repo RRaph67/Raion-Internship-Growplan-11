@@ -21,7 +21,8 @@ class TodoItemWidget extends StatelessWidget {
       height: 66,
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        // ✅ Ubah warna background menjadi hijau muda
+        color: const Color.fromARGB(255, 230, 253, 227),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -40,9 +41,9 @@ class TodoItemWidget extends StatelessWidget {
               height: 32,
               child: Image.asset(
                 'assets/icons/detail_plant/siram.png',
-                width: double.infinity,
-                fit: BoxFit.cover,
-                height: 300,
+                width: 32,
+                height: 32,
+                fit: BoxFit.contain,
               ),
             ),
           ),
@@ -57,6 +58,7 @@ class TodoItemWidget extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -76,11 +78,16 @@ class TodoItemWidget extends StatelessWidget {
             child: Container(
               width: 25,
               height: 25,
+              margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
-                color: isCompleted ? AppPallete.primaryNormal : Colors.transparent,
+                color: isCompleted
+                    ? AppPallete.primaryNormal
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isCompleted ? AppPallete.primaryNormal : Colors.grey,
+                  color: isCompleted
+                      ? const Color.fromARGB(255, 202, 251, 187)
+                      : AppPallete.primaryNormal,
                   width: 2,
                 ),
               ),

@@ -1,0 +1,144 @@
+import 'package:flutter/material.dart';
+
+// Konstanta warna agar mudah diubah dan konsisten
+class AppColors {
+  static const Color primaryGreen = Color(0xFF508C1D);
+  static const Color lightGreenBg = Color(0xFFF0F8E9);
+  static const Color lightGreenBorder = Color(0xFFD1EABC);
+  static const Color borderColor = Color(0xFFE2E2E2);
+  static const Color textColor = Color(0xFF383838);
+}
+
+class PersiapanWidget extends StatelessWidget {
+  final List<String> persiapan;
+
+  const PersiapanWidget({super.key, required this.persiapan});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 388,
+          padding: const EdgeInsets.all(20),
+          decoration: ShapeDecoration(
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              side: BorderSide(width: 1, color: AppColors.borderColor),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            shadows: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Image.asset(
+                    'assets/icons/detail_plant/persiapan.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Persiapan',
+                    style: const TextStyle(
+                      color: AppColors.primaryGreen,
+                      fontSize: 20,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w800,
+                      height: 1.20,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12), // jarak rapat
+              _buildItemList(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildItemList() {
+    final titles = ['Media Tanam', 'Cahaya', 'Suhu'];
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: titles.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        final value = index < persiapan.length
+            ? persiapan[index]
+            : 'Data tidak tersedia';
+        return _buildItem(titles[index], value);
+      },
+    );
+  }
+
+  Widget _buildItem(String title, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: ShapeDecoration(
+        color: AppColors.lightGreenBg,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(width: 1, color: AppColors.lightGreenBorder),
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center, // sejajarkan icon & teks
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: AppColors.primaryGreen.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.info_outline,
+                color: AppColors.primaryGreen,
+                size: 16,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: AppColors.primaryGreen,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: 12,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

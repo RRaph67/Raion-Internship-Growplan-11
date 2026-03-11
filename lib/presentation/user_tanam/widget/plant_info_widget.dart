@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/theme/app_pallete.dart';
 
 class PlantInfoWidget extends StatelessWidget {
   final Map<String, dynamic> detail;
@@ -23,7 +24,7 @@ class PlantInfoWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -81,18 +82,15 @@ class PlantInfoWidget extends StatelessWidget {
                       width: 103,
                       height: 25,
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 247, 255, 246),
+                        color: AppPallete.primaryDark,
                         borderRadius: BorderRadius.circular(25),
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 47, 200, 0),
-                        ),
                       ),
                       child: const Center(
                         child: Text(
                           "Rekomendasi",
                           style: TextStyle(
                             fontSize: 12,
-                            color: Color(0xFF6ABA27),
+                            color: Colors.white,
                             fontWeight: FontWeight.normal,
                           ),
                         ),

@@ -1,4 +1,6 @@
+// File: lib/presentation/plant_info/pages/plant_info.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/presentation/detail_repo/pages/plant_repo_detail.dart';
 import 'package:flutter_application_1/presentation/plant_info/widget/plant_card.dart';
 import 'package:flutter_application_1/presentation/plant_info/widget/side_long_card.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -12,10 +14,10 @@ class PlantInfo extends StatefulWidget {
 
 class _PlantInfoState extends State<PlantInfo> {
   final supabase = Supabase.instance.client;
-
   List<Map<String, dynamic>> _repoTanam = [];
   bool _isLoading = true;
   String? _errorMessage;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -23,17 +25,25 @@ class _PlantInfoState extends State<PlantInfo> {
     _getRepoTanam();
   }
 
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
   Future<void> _getRepoTanam() async {
     try {
       final data = await supabase.from('repo_tanaman').select();
 
-      print("Response: $data"); // debug print
+      if (!mounted || _isDisposed) return;
 
       setState(() {
         _repoTanam = List<Map<String, dynamic>>.from(data);
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted || _isDisposed) return;
+
       setState(() {
         _errorMessage = e.toString();
         _isLoading = false;
@@ -81,7 +91,7 @@ class _PlantInfoState extends State<PlantInfo> {
                 ),
                 const SizedBox(height: 16),
                 GridView.builder(
-                  shrinkWrap: true, // penting biar bisa di dalam ListView
+                  shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -103,10 +113,24 @@ class _PlantInfoState extends State<PlantInfo> {
                     final namaIlmiah =
                         tanaman['nama_ilmiah']?.toString() ?? jenis;
 
-                    return PlantCard(
-                      imageUrl: displayImage,
-                      namaAsli: nama,
-                      namaIlmiah: namaIlmiah,
+                    return GestureDetector(
+                      onTap: () {
+                        // ✅ PERBAIKAN: Gunakan 'id' dari 'tanaman', bukan 'item'
+                        final repoTanamId = tanaman['id'] as int;
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                PlantRepoDetail(repoTanamId: repoTanamId),
+                          ),
+                        );
+                      },
+                      child: PlantCard(
+                        imageUrl: displayImage,
+                        namaAsli: nama,
+                        namaIlmiah: namaIlmiah,
+                      ),
                     );
                   },
                 ),

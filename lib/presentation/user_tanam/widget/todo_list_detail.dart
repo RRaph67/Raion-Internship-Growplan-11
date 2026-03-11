@@ -31,14 +31,14 @@ class _TodoListWidgetState extends State<TodoListWidget> {
 
     return Container(
       // ✅ Hapus margin horizontal agar widget bisa di-center
-      margin: const EdgeInsets.symmetric(horizontal: 0),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 3),
@@ -51,7 +51,11 @@ class _TodoListWidgetState extends State<TodoListWidget> {
           // Title To Do List
           const Text(
             "To Do List",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
           const SizedBox(height: 16),
           // Toggle Buttons
@@ -68,7 +72,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
           if (filteredTodos.isEmpty)
             Center(
               child: Text(
-                "Kerenn, todo kamu sudah selesai hari ini",
+                "Lah kosong njiir",
                 style: TextStyle(
                   color: Colors.grey[600],
                   fontStyle: FontStyle.italic,
@@ -115,18 +119,18 @@ class _TodoListWidgetState extends State<TodoListWidget> {
         });
       },
       child: Container(
-        width: 62,
-        height: 20,
+        width: 155,
+        height: 32,
         decoration: BoxDecoration(
           color: isActive
-              ? AppPallete.primaryDarkActive
+              ? AppPallete.primaryDark
               : const Color.fromARGB(255, 230, 253, 227),
           borderRadius: BorderRadius.circular(11),
           // ✅ Tambahkan Border/Outline
           border: Border.all(
             color: isActive
-                ? AppPallete.primaryDarkActive
-                : const Color.fromARGB(255, 202, 251, 187),
+                ? AppPallete.primaryDark
+                : AppPallete.primaryDark,
             width: 1.5,
           ),
         ),
@@ -136,7 +140,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: isActive ? Colors.white : Colors.grey[600],
+              color: isActive ? Colors.white : AppPallete.primaryDark,
             ),
           ),
         ),

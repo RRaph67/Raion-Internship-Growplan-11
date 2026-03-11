@@ -1,4 +1,4 @@
-// cubit/user_tanam_cubit.dart
+// File: lib/cubit/user_tanam_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'user_tanam_state.dart';
@@ -13,19 +13,76 @@ class UserTanamCubit extends Cubit<UserTanamState> {
     try {
       final response = await supabase
           .from('user_tanam')
-          .select(
-            'id, nama_tanam, tanggal_tanam, image_url, repo_tanaman(nama_statis, jenis_tanaman), todo_tanam(id, nama_todo, tanggal_todo, jam_todo, status, complete_at)',
-          )
+          .select('''
+          id, nama_tanam, tanggal_tanam, image_url,
+          repo_tanaman(nama_statis, nama_ilmiah, jenis_tanaman, persiapan, perawatan, ringkasan),
+          todo_tanam(id, nama_todo, tanggal_todo, jam_todo, status, complete_at)
+          ''')
           .eq('id', userTanamId)
           .single();
 
-      // Debug print untuk verify data
       print("=== DATA USER TANAM DETAIL ===");
-      print("Todo Tanam: ${response['todo_tanam']}");
-      print("Image URL: ${response['image_url']}");
       print("Repo Tanaman: ${response['repo_tanaman']}");
+      print("Todo Tanam: ${response['todo_tanam']}");
 
-      emit(UserTanamDetailLoaded(response));
+      // Extract data dari nested object
+      final repoTanaman = response['repo_tanaman'] as Map<String, dynamic>?;
+      final todoTanamRaw = response['todo_tanam'] as List<dynamic>? ?? [];
+
+      // ✅ PERBAIKAN: Konversi semua List ke List<String> SEBELUM emit
+      final List<String> persiapan =
+          (repoTanaman?['persiapan'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .cast<String>()
+              .toList() ??
+          [];
+
+      final List<String> perawatan =
+          (repoTanaman?['perawatan'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .cast<String>()
+              .toList() ??
+          [];
+
+      final List<String> jenisTanaman =
+          (repoTanaman?['jenis_tanaman'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .cast<String>()
+              .toList() ??
+          [];
+
+      // Convert todo_tanam ke List<Map<String, dynamic>>
+      final List<Map<String, dynamic>> todoTanam = todoTanamRaw
+          .map((todo) => Map<String, dynamic>.from(todo))
+          .toList();
+
+      // Buat map data dengan tipe yang sudah dikonversi
+      final plantData = <String, dynamic>{
+        'id': response['id'],
+        'nama_tanam': response['nama_tanam'] ?? 'Tanaman Tanpa Nama',
+        'tanggal_tanam': response['tanggal_tanam'] ?? '',
+        'image_url': response['image_url'] ?? '',
+        'nama_statis': repoTanaman?['nama_statis'] ?? 'Tanaman Tanpa Nama',
+        'nama_ilmiah': repoTanaman?['nama_ilmiah'] ?? '',
+        'jenis_tanaman': jenisTanaman, // ✅ List<String>
+        'persiapan': persiapan, // ✅ List<String>
+        'perawatan': perawatan, // ✅ List<String>
+        'ringkasan': repoTanaman?['ringkasan'] ?? '',
+        'todo_tanam': todoTanam, // ✅ Tambahkan todo_tanam
+        // Pre-process untuk widget
+        'media_tanam': persiapan.length > 0 ? persiapan[0] : 'Belum ada data',
+        'cahaya': persiapan.length > 1 ? persiapan[1] : 'Belum ada data',
+        'suhu': persiapan.length > 2 ? persiapan[2] : 'Belum ada data',
+        'air': perawatan.length > 0 ? perawatan[0] : 'Belum ada data',
+        'pupuk': perawatan.length > 1 ? perawatan[1] : 'Belum ada data',
+      };
+
+      print("Persiapan: $persiapan");
+      print("Perawatan: $perawatan");
+      print("Todo Tanam: $todoTanam");
+      print("Jenis Tanaman: $jenisTanaman");
+
+      emit(UserTanamDetailLoaded(plantData));
     } catch (e) {
       print("Error fetch detail: $e");
       emit(UserTanamError(e.toString()));
@@ -38,7 +95,6 @@ class UserTanamCubit extends Cubit<UserTanamState> {
         final currentState = state as UserTanamDetailLoaded;
         final detail = Map<String, dynamic>.from(currentState.detail);
 
-        // Handle null todo_tanam
         final todosRaw = detail['todo_tanam'] as List<dynamic>? ?? [];
         final todos = List<Map<String, dynamic>>.from(todosRaw);
 
@@ -49,11 +105,8 @@ class UserTanamCubit extends Cubit<UserTanamState> {
 
         final todo = todos[index];
         final statusRaw = todo['status'] as List<dynamic>? ?? [];
-
-        // Convert to String list
         final status = statusRaw.map((e) => e.toString()).toList();
 
-        // Toggle status - lebih aman dengan clear dulu
         final isDone = status.contains('done');
         final newStatus = isDone ? ['pending'] : ['done'];
 
@@ -61,13 +114,11 @@ class UserTanamCubit extends Cubit<UserTanamState> {
         todos[index] = todo;
         detail['todo_tanam'] = todos;
 
-        // Update ke Supabase
         await supabase
             .from('todo_tanam')
             .update({'status': newStatus})
             .eq('id', todo['id']);
 
-        // Emit state baru
         emit(UserTanamDetailLoaded(detail));
       }
     } catch (e) {
