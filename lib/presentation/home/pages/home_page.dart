@@ -7,7 +7,7 @@ import 'package:flutter_application_1/presentation/home/widgets/bottom_navigatio
 import 'package:flutter_application_1/presentation/plant_info/pages/main_plant_page.dart';
 import 'package:flutter_application_1/presentation/plant_info/widget/simple_appbar.dart';
 import 'package:flutter_application_1/presentation/profile/cubit/profile_cubit.dart';
-import 'package:flutter_application_1/presentation/profile/edit_profile.dart';
+import 'package:flutter_application_1/presentation/profile/pages/profil_kosong.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -95,14 +95,10 @@ class _HomePageState extends State<HomePage> {
           onAvatarTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => ProfileCubit(supabase),
-                  child: const EditProfile(),
-                ),
-              ),
+              MaterialPageRoute(builder: (_) => const ProfileEmptyPage()),
             );
           },
+
           rightIconPath: 'assets/icons/home/notifications.png',
         );
       case 1:

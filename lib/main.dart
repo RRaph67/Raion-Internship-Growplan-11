@@ -38,10 +38,12 @@ class MyApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           elevation: 0,
-          surfaceTintColor: Colors.transparent, // matikan efek overlay
+          surfaceTintColor: Colors.transparent, 
         ),
       ),
       title: 'GrowPlan',
+
+      
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LogIn(),
@@ -49,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/forgot': (context) => const ForgotPasswordPage(),
       },
+
     );
   }
 }
