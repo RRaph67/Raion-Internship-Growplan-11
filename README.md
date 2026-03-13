@@ -1,8 +1,8 @@
-🌿 GrowPlan
+**🌿 GrowPlan**
 
 GrowPlan adalah aplikasi manajemen perawatan tanaman cerdas yang dirancang untuk membantu pecinta tanaman memantau pertumbuhan, menjadwalkan perawatan, dan mengelola koleksi tanaman mereka secara digital. Dengan antarmuka yang modern dan integrasi cloud, GrowPlan memastikan tanaman Anda selalu mendapatkan perhatian yang mereka butuhkan.
 
-✨ Fitur Utama
+**✨ Fitur Utama**
 
 Aplikasi GrowPlan hadir dengan serangkaian fitur andalan:
 
@@ -18,7 +18,7 @@ Sinkronisasi Cloud Real-time: Semua data tanaman tersimpan secara aman di cloud,
 
 UI Responsif: Desain antarmuka yang bersih, intuitif, dan ramah pengguna dengan skema warna alam yang menenangkan.
 
-🛠 Tech Stack
+**🛠 Tech Stack**
 
 GrowPlan dibangun menggunakan teknologi mutakhir untuk memastikan performa dan skalabilitas:
 
@@ -34,7 +34,7 @@ Penyimpanan Gambar: Supabase Storage
 
 Routing: Navigator 2.0 / Flutter Material Routing
 
-🏗 Arsitektur Aplikasi
+**🏗 Arsitektur Aplikasi**
 
 GrowPlan mengadopsi pola Clean Architecture yang dipadukan dengan BLoC Pattern. Struktur proyek dibagi menjadi beberapa lapisan utama untuk memastikan kode yang rapi dan modular:
 
@@ -56,7 +56,7 @@ cubit/: Mengelola state aplikasi (seperti UserTanamCubit).
 
 pages/: Folder utama untuk setiap layar aplikasi (Login, Home, Add Plant, Detail).
 
-📱 Cakupan Platform
+**📱 Cakupan Platform**
 
 Berkat fleksibilitas Flutter, GrowPlan dirancang untuk berjalan secara optimal di berbagai platform:
 
@@ -90,7 +90,7 @@ Desktop
 
 Mendukung Windows/macOS dengan penyesuaian layout.
 
-🚀 Cara Menjalankan Proyek
+**🚀 Cara Menjalankan Proyek**
 
 Clone Repositori:
 
