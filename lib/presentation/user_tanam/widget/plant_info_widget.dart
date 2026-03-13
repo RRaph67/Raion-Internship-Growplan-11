@@ -19,7 +19,7 @@ class PlantInfoWidget extends StatelessWidget {
     final hariKe = daysSincePlanted;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -125,7 +125,7 @@ class PlantInfoWidget extends StatelessWidget {
   }
 
   Widget _buildWateringCard({required String time}) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
     decoration: BoxDecoration(
       color: const Color.fromARGB(255, 230, 253, 227),
       borderRadius: BorderRadius.circular(25),
@@ -161,7 +161,7 @@ class PlantInfoWidget extends StatelessWidget {
   );
 
   Widget _buildPupukCard({required String time}) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
     decoration: BoxDecoration(
       color: const Color.fromARGB(255, 230, 253, 227),
       borderRadius: BorderRadius.circular(25),

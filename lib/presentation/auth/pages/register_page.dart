@@ -292,21 +292,6 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
           ),
-
-          // Mid Logo 
-          Positioned(
-            bottom: 570, // posisikan tepat di atas container
-            left: 0,
-            right: 0,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Image.asset(
-                'assets/Group 36698.png',
-                width: 117,
-                height: 109,
-              ),
-            ),
-          ),
         ],
       ),
     );

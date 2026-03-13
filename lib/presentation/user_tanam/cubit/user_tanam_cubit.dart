@@ -6,7 +6,7 @@ import 'package:flutter_application_1/data/models/user_tanam_model.dart';
 class UserTanamCubit extends Cubit<UserTanamState> {
   final SupabaseClient _supabase;
 
-  // Simpan list secara lokal agar tidak hilang saat pindah state ke detail
+  // Cache lokal untuk menyimpan daftar tanaman agar transisi UI lebih mulus
   List<UserTanamModel> _cachedList = [];
 
   UserTanamCubit(this._supabase) : super(UserTanamInitial());
@@ -15,11 +15,8 @@ class UserTanamCubit extends Cubit<UserTanamState> {
     emit(UserTanamInitial());
   }
 
-  // Method Load Detail Tanaman (untuk Detail Page)
+  /// Mengambil detail tanaman spesifik berdasarkan ID
   Future<void> loadPlantInfo(String userId, int userTanamId) async {
-    // Jangan emit loading global jika kita ingin mempertahankan list di background,
-    // tapi karena Detail Page butuh feedback, kita tetap emit.
-    // Solusinya adalah UI Home harus memanggil fetch lagi jika state bukan ListLoaded.
     emit(UserTanamLoading());
 
     try {
@@ -31,7 +28,7 @@ class UserTanamCubit extends Cubit<UserTanamState> {
           .maybeSingle();
 
       if (response == null) {
-        emit(UserTanamError('Plant not found'));
+        emit(UserTanamError('Tanaman tidak ditemukan'));
         return;
       }
 
@@ -46,7 +43,7 @@ class UserTanamCubit extends Cubit<UserTanamState> {
     }
   }
 
-  // Method Load List Tanaman (untuk HomePage)
+  /// Mengambil semua daftar tanaman milik user yang sedang login
   Future<void> fetchUserTanamList() async {
     emit(UserTanamLoading());
     try {
@@ -65,7 +62,7 @@ class UserTanamCubit extends Cubit<UserTanamState> {
     }
   }
 
-  // Tambahkan method ini untuk mengembalikan state ke list tanpa fetch ulang jika sudah ada cache
+  /// Mengembalikan state ke daftar tanpa fetch ulang ke database
   void restoreList() {
     if (_cachedList.isNotEmpty) {
       emit(UserTanamListLoaded(_cachedList));
@@ -74,6 +71,8 @@ class UserTanamCubit extends Cubit<UserTanamState> {
     }
   }
 
+  /// Menambahkan tanaman baru ke koleksi user
+  /// Menggunakan .limit(1) untuk menghindari error jika satu jenis memiliki banyak entri di repo
   Future<void> addUserTanamByJenis({
     required String namaTanam,
     required DateTime tanggalTanam,
@@ -82,27 +81,37 @@ class UserTanamCubit extends Cubit<UserTanamState> {
   }) async {
     emit(UserTanamLoading());
     try {
-      final repoResponse = await _supabase
+      // MENGATASI ERROR 406: Mencari ID referensi dari repo_tanaman
+      // Kita gunakan .limit(1) karena 'jenis_tanaman' (misal: 'Hias') bisa ditemukan di banyak baris
+      final List<dynamic> repoResponse = await _supabase
           .from('repo_tanaman')
           .select('id')
           .eq('jenis_tanaman', jenisTanaman)
-          .maybeSingle();
+          .limit(1);
 
-      if (repoResponse == null) {
-        emit(UserTanamError('Jenis tanaman tidak ditemukan di database'));
+      if (repoResponse.isEmpty) {
+        emit(
+          UserTanamError(
+            'Kategori "$jenisTanaman" tidak ditemukan di repositori tanaman.',
+          ),
+        );
         return;
       }
 
-      final repoTanamanId = repoResponse['id'] as int;
+      // Ambil ID dari baris pertama yang ditemukan
+      final repoTanamanId = repoResponse.first['id'] as int;
 
       final insertData = {
         'user_id': _supabase.auth.currentUser?.id ?? '',
         'repo_tanaman_id': repoTanamanId,
         'nama_tanam': namaTanam,
-        'tanggal_tanam': tanggalTanam.toIso8601String().split('T')[0],
+        'tanggal_tanam': tanggalTanam.toIso8601String().split(
+          'T',
+        )[0], // Simpan format YYYY-MM-DD
         'image_url': imageUrl,
       };
 
+      // Insert data ke tabel user_tanam
       final insertResponse = await _supabase
           .from('user_tanam')
           .insert(insertData)
@@ -111,10 +120,11 @@ class UserTanamCubit extends Cubit<UserTanamState> {
 
       final newId = insertResponse['id'] as int;
       emit(UserTanamSuccess(newId));
-      // Refresh list setelah tambah
+
+      // Refresh list agar HomePage terupdate otomatis
       fetchUserTanamList();
     } catch (e) {
-      emit(UserTanamError(e.toString()));
+      emit(UserTanamError("Gagal menambah tanaman: ${e.toString()}"));
     }
   }
 }

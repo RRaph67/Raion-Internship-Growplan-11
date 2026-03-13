@@ -1,4 +1,3 @@
-// File: lib/presentation/user_tanam/widget/todo_item_detail.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/data/models/todo_tanam_model.dart';
 
@@ -19,52 +18,70 @@ class TodoItemWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        width: 326,
+        height: 66,
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: isCompleted
-              ? const Color.fromARGB(255, 230, 253, 227)
-              : Colors.white,
+          // Menggunakan warna background D1EABC
+          color: const Color(0xFFD1EABC),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isCompleted
-                ? const Color.fromARGB(255, 47, 200, 0)
-                : Colors.grey[300]!,
-            width: 1.5,
-          ),
         ),
         child: Row(
           children: [
-            Icon(
-              isCompleted ? Icons.check_circle : Icons.circle_outlined,
-              color: isCompleted
-                  ? const Color.fromARGB(255, 47, 200, 0)
-                  : Colors.grey,
-              size: 24,
+            // Gambar siram.png di paling kiri
+            Image.asset(
+              'assets/icons/detail_plant/siram.png',
+              width: 32,
+              height: 32,
+              // Fallback jika file tidak ditemukan saat pengembangan
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.water_drop,
+                size: 32,
+                color: Color(0xFF508C1D),
+              ),
             ),
             const SizedBox(width: 12),
+
+            // Judul dan Subjudul
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    todo.namaTodo,
+                    todo.namaTodo, // Contoh: "Siram"
                     style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isCompleted ? Colors.grey[600] : Colors.black87,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isCompleted ? Colors.grey[700] : Colors.black,
                       decoration: isCompleted
                           ? TextDecoration.lineThrough
                           : null,
                     ),
                   ),
-                  const SizedBox(height: 4),
                   Text(
                     "${todo.jamTodo} - ${_formatDate(todo.tanggalTodo)}",
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
                   ),
                 ],
               ),
+            ),
+
+            // Custom Checkbox di paling kanan
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: isCompleted
+                    ? const Color(0xFF508C1D)
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: const Color(0xFF508C1D), width: 2),
+              ),
+              child: isCompleted
+                  ? const Icon(Icons.check, size: 18, color: Colors.white)
+                  : null,
             ),
           ],
         ),
