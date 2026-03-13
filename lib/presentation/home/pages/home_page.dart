@@ -33,13 +33,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // Inisialisasi data tanaman (Logika Kode 2)
     context.read<UserTanamCubit>().fetchUserTanamList();
 
-    // Inisialisasi data user (Logika Kode 1)
     final state = context.read<AuthCubit>().state;
     if (state is AuthSuccess) {
-      _getUserInfo(); // Mengambil nama dari metadata
+      _getUserInfo(); 
       _currentPhotoUrl = state.user.fotoProfil;
     }
   }
@@ -62,14 +60,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     if (user != null) {
       final metadata = user.userMetadata ?? {};
       setState(() {
-        // Mengutamakan metadata 'name' sesuai fitur Kode 1
         _username = metadata['name']?.toString() ?? "User";
       });
     }
   }
 
-  // Tampilan Home dengan GridView (Kode 2) tapi tetap responsif
-// Update pada bagian _buildHomePage di dalam HomePage class
   Widget _buildHomePage() {
     return BlocBuilder<UserTanamCubit, UserTanamState>(
       builder: (context, state) {
@@ -87,7 +82,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 32),
-                    // Menyesuaikan tinggi agar konten berada di tengah layar
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
                     ),
@@ -109,12 +103,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF508C1D), // Warna sesuai permintaan
+                              color: Color(0xFF508C1D), 
                             ),
                           ),
                           const SizedBox(
                             height: 100,
-                          ), // Memberi ruang bawah agar tidak terlalu mepet
+                          ), 
                         ],
                       ),
                     ),
@@ -124,7 +118,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             );
           }
 
-          // Jika ada data, tampilkan GridView
           return GridView.builder(
             padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -171,7 +164,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           username: _username,
           photoUrl: _currentPhotoUrl,
           onAvatarTap: () {
-            // Menerapkan Fitur Update dari Kode 1: Pindah ke Profil Kosong
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const ProfileEmptyPage()),
@@ -201,7 +193,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      // BlocListener memastikan jika profile diupdate di tempat lain, UI Home ikut berubah
       body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {

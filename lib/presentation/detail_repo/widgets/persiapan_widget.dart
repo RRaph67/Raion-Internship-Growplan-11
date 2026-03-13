@@ -65,7 +65,7 @@ class PersiapanWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12), // Jarak rapat antara judul dan list
+              const SizedBox(height: 12), 
               _buildItemList(),
             ],
           ),

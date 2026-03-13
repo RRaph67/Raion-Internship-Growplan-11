@@ -22,7 +22,6 @@ class _UserTanamDetailPageState extends State<UserTanamDetailPage> {
   void initState() {
     super.initState();
     final userId = Supabase.instance.client.auth.currentUser?.id ?? '';
-    // ✅ Panggil load detail saat masuk
     context.read<UserTanamCubit>().loadPlantInfo(userId, widget.userTanamId);
   }
 
@@ -31,13 +30,11 @@ class _UserTanamDetailPageState extends State<UserTanamDetailPage> {
     return Scaffold(
       appBar: SimpleAppBar(
         title: "Detail Tanaman",
-        // ✅ Gunakan onBackTap untuk restore state sebelum keluar
         onBackTap: () {
           context.read<UserTanamCubit>().restoreList();
           Navigator.pop(context);
         },
       ),
-      // ✅ Handle hardware back button (Android)
       body: PopScope(
         canPop: false, // Kita handle manual
         onPopInvokedWithResult: (didPop, result) {

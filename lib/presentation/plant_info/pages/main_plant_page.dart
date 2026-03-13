@@ -1,4 +1,3 @@
-// File: lib/presentation/plant_info/pages/plant_info.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/presentation/detail_repo/pages/plant_repo_detail.dart';
 import 'package:flutter_application_1/presentation/plant_info/widget/plant_card.dart';
@@ -57,7 +56,6 @@ class _PlantInfoState extends State<PlantInfo> {
     }
   }
 
-  // ✅ DIPERBAIKI: Filter dengan String, bukan List
   void _applyFilter(String category) {
     setState(() {
       _selectedCategory = category;

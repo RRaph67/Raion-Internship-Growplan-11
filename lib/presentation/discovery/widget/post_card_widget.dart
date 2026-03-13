@@ -1,4 +1,3 @@
-// File: lib/presentation/discovery/widget/post_card_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/presentation/discovery/widget/common_widget.dart';
 

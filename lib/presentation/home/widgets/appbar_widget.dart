@@ -1,4 +1,3 @@
-// File: lib/presentation/home/widgets/appbar_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/theme/app_pallete.dart';
 
@@ -56,7 +55,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               child: CircleAvatar(
                 radius: 20,
                 backgroundColor: Colors.grey[200],
-                // ✅ Validasi URL sebelum load NetworkImage
+                // Validasi URL sebelum load NetworkImage
                 backgroundImage: _isValidUrl(photoUrl)
                     ? NetworkImage(photoUrl!)
                     : null,

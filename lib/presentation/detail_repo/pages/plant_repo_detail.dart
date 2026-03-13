@@ -116,12 +116,6 @@ class _PlantRepoDetailState extends State<PlantRepoDetail> {
             .toList() ??
         [];
 
-    // ✅ Debug: Cek data yang akan ditampilkan
-    print("=== DATA UNTUK WIDGET ===");
-    print("Persiapan: $persiapan");
-    print("Perawatan: $perawatan");
-    print("Perawatan Length: ${perawatan.length}");
-
     final nama = _plantData!['nama_statis'] ?? 'Tanaman Tanpa Nama';
     final jenis = _plantData!['jenis_tanaman'] ?? [];
     final imageUrl = _plantData!['image_url'] ?? '';

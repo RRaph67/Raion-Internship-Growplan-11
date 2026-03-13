@@ -1,4 +1,3 @@
-// File: lib/data/cubit/todo_tanam_cubit.dart
 import 'package:flutter_application_1/presentation/user_tanam/cubit/todo_tanam_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -43,17 +42,15 @@ class TodoTanamCubit extends Cubit<TodoTanamState> {
     try {
       final today = DateTime.now().toIso8601String().split('T')[0];
 
-      // Cek apakah sudah ada todo hari ini (pakai maybeSingle atau limit 1)
       final existing = await _supabase
           .from('todo_tanam')
           .select('id')
           .eq('user_tanam_id', userTanamId)
           .eq('tanggal_todo', today)
           .limit(1)
-          .maybeSingle(); // ✅ Method yang benar
+          .maybeSingle(); 
 
       if (existing == null) {
-        // Buat 2 todo baru (Pagi & Sore)
         final newTodos = [
           {
             'user_tanam_id': userTanamId,
@@ -77,7 +74,6 @@ class TodoTanamCubit extends Cubit<TodoTanamState> {
         await loadTodos(userTanamId);
       }
     } catch (e) {
-      // Jangan emit error agar UI tidak crash, tapi log saja
       print('Error creating daily todos: $e');
     }
   }
@@ -90,7 +86,7 @@ class TodoTanamCubit extends Cubit<TodoTanamState> {
           .from('todo_tanam')
           .select('status')
           .eq('id', todoId)
-          .maybeSingle(); // ✅ Method yang benar
+          .maybeSingle(); 
 
       if (current == null) {
         emit(TodoTanamError('Todo not found'));

@@ -35,7 +35,6 @@ class _ProfileEmptyPageState extends State<ProfileEmptyPage> {
       // Nama tetap mengambil dari metadata (display name)
       _name = (data['name'] ?? 'John Doe').toString();
 
-      // Mengubah _username agar berisi EMAIL user
       // Jika email tidak ditemukan, fallback ke metadata username atau string kosong
       _username = user.email ?? (data['username'] ?? '@johndoe123').toString();
 
@@ -55,11 +54,9 @@ class _ProfileEmptyPageState extends State<ProfileEmptyPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Menyesuaikan dimensi agar sama dengan SimpleAppBar
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          // Ukuran mengikuti SimpleAppBar (60)
           preferredSize: const Size.fromHeight(60),
           child: Container(
             decoration: const BoxDecoration(
@@ -81,7 +78,6 @@ class _ProfileEmptyPageState extends State<ProfileEmptyPage> {
               elevation: 0,
               centerTitle: true,
               automaticallyImplyLeading: false,
-              // Mengikuti gaya leading SimpleAppBar
               leading: IconButton(
                 icon: Container(
                   width: 32,
@@ -106,6 +102,7 @@ class _ProfileEmptyPageState extends State<ProfileEmptyPage> {
                   color: Color(0xff305412),
                 ),
               ),
+
               // Tombol Menu khusus Profile diletakkan di actions
               actions: [
                 IconButton(

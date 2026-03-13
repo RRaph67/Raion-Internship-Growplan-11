@@ -71,7 +71,6 @@ class UserTanamCubit extends Cubit<UserTanamState> {
     }
   }
 
-  /// Menambahkan tanaman baru ke koleksi user
   /// Menggunakan .limit(1) untuk menghindari error jika satu jenis memiliki banyak entri di repo
   Future<void> addUserTanamByJenis({
     required String namaTanam,
@@ -81,8 +80,6 @@ class UserTanamCubit extends Cubit<UserTanamState> {
   }) async {
     emit(UserTanamLoading());
     try {
-      // MENGATASI ERROR 406: Mencari ID referensi dari repo_tanaman
-      // Kita gunakan .limit(1) karena 'jenis_tanaman' (misal: 'Hias') bisa ditemukan di banyak baris
       final List<dynamic> repoResponse = await _supabase
           .from('repo_tanaman')
           .select('id')

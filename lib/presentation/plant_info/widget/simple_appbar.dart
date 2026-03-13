@@ -29,7 +29,6 @@ class SimpleAppBar extends StatelessWidget implements PreferredSizeWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        // ✅ Matikan default leading otomatis dari Flutter agar tidak konflik
         automaticallyImplyLeading: false,
         leading: showBackButton
             ? IconButton(
@@ -45,10 +44,8 @@ class SimpleAppBar extends StatelessWidget implements PreferredSizeWidget {
 
                 onPressed: () {
                   if (onBackTap != null) {
-                    // Jika ada fungsi khusus (seperti pindah tab di HomePage), jalankan itu
                     onBackTap!();
                   } else {
-                    // Default fallback: kembali ke halaman sebelumnya di stack Navigator
                     Navigator.pop(context);
                   }
                 },

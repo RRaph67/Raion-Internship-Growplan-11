@@ -1,4 +1,3 @@
-// File: lib/presentation/plant_info/cubit/repo_tanam_state.dart
 import 'package:flutter_application_1/data/models/repo_tanaman_model.dart';
 
 abstract class RepoTanamanState {}

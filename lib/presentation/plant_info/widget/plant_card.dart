@@ -25,16 +25,15 @@ class PlantCard extends StatelessWidget {
             color: Colors.grey.withOpacity(0.1),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: const Offset(0, 3), // changes position of shadow
+            offset: const Offset(0, 3), 
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // BAGIAN ATAS: Gambar Tanaman
           Expanded(
-            flex: 5, // Mengambil 5 bagian dari tinggi total
+            flex: 5, 
             child: ClipRRect(
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(25),
@@ -45,9 +44,9 @@ class PlantCard extends StatelessWidget {
                 ),
                 child: Image.network(
                   imageUrl,
-                  fit: BoxFit.cover, // biar gambar menutup penuh
-                  width: double.infinity, // isi penuh lebar card
-                  height: double.infinity, // isi penuh tinggi Expanded flex
+                  fit: BoxFit.cover, 
+                  width: double.infinity, 
+                  height: double.infinity, 
                   errorBuilder: (context, error, stackTrace) {
                     return const Center(
                       child: Icon(Icons.broken_image, size: 40),
@@ -57,8 +56,6 @@ class PlantCard extends StatelessWidget {
               ),
             ),
           ),
-
-          // BAGIAN BAWAH: Teks dan Tombol
           Expanded(
             flex: 3,
             child: Padding(
@@ -66,7 +63,6 @@ class PlantCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Baris 1: Nama Asli + Panah (Sejajar)
                   Row(
                     children: [
                       Expanded(
@@ -77,7 +73,7 @@ class PlantCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                             overflow: TextOverflow
-                                .ellipsis, // Agar teks tidak keluar jika terlalu panjang
+                                .ellipsis, 
                           ),
                           maxLines: 1,
                         ),
@@ -85,7 +81,7 @@ class PlantCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       const Icon(
                         Icons
-                            .arrow_forward_ios, // Panah menghadap kanan (karena di kanan)
+                            .arrow_forward_ios,
                         size: 16,
                         color: Colors.black,
                       ),

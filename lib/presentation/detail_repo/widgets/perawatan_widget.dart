@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-// Konstanta warna agar konsisten dengan widget lainnya
 class AppColors {
   static const Color primaryGreen = Color(0xFF508C1D);
   static const Color lightGreenBg = Color(0xFFF0F8E9);
@@ -38,7 +37,7 @@ class PerawatanWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize:
-                MainAxisSize.min, // Membuat container menciut mengikuti konten
+                MainAxisSize.min, 
             children: [
               // Header: Icon + Judul
               Row(
@@ -66,7 +65,7 @@ class PerawatanWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12), // Jarak rapat antara judul dan list
+              const SizedBox(height: 12), 
               _buildItemList(),
             ],
           ),
@@ -76,12 +75,11 @@ class PerawatanWidget extends StatelessWidget {
   }
 
   Widget _buildItemList() {
-    // Judul item disesuaikan dengan konteks perawatan (biasanya Air dan Pupuk)
     final titles = ['Penyiraman', 'Pemupukan',];
 
     return ListView.separated(
       shrinkWrap: true,
-      padding: EdgeInsets.zero, // Hilangkan padding default listview
+      padding: EdgeInsets.zero, 
       physics: const NeverScrollableScrollPhysics(),
       itemCount: titles.length,
       separatorBuilder: (context, index) => const SizedBox(height: 8),

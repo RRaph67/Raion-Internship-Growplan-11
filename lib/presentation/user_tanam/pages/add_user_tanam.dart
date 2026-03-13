@@ -15,8 +15,6 @@ class AddUserTanamPage extends StatelessWidget {
       appBar: SimpleAppBar(title: "Tambah Tanaman"),
       body: MultiBlocProvider(
         providers: [
-          // ✅ Hapus UserTanamCubit BlocProvider (sudah ada di main.dart)
-          // ✅ Tambahkan SupabaseClient ke RepoTanamanCubit
           BlocProvider(
             create: (_) =>
                 RepoTanamanCubit(Supabase.instance.client)..fetchJenisTanaman(),

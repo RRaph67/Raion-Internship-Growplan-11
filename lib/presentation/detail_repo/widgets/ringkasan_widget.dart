@@ -11,7 +11,6 @@ class RingkasanWidget extends StatelessWidget {
       children: [
         Container(
           width: 388,
-          // Menghapus 'height: 120' agar container menyesuaikan tinggi konten secara otomatis
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: ShapeDecoration(
             color: Colors.white,
@@ -30,7 +29,7 @@ class RingkasanWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize
-                .min, // Memastikan column hanya memakan ruang sekecil mungkin
+                .min, 
             children: [
               Row(
                 children: [
@@ -54,7 +53,7 @@ class RingkasanWidget extends StatelessWidget {
               ),
               const SizedBox(
                 height: 12,
-              ), // Jarak rapat sesuai preferensi desain sebelumnya
+              ),
               Text(
                 ringkasan,
                 textAlign: TextAlign.justify,
@@ -63,7 +62,7 @@ class RingkasanWidget extends StatelessWidget {
                   fontSize: 12,
                   fontFamily: 'Inter',
                   fontWeight: FontWeight.w400,
-                  height: 1.4, // Menambah line height agar lebih nyaman dibaca
+                  height: 1.4, 
                 ),
               ),
             ],

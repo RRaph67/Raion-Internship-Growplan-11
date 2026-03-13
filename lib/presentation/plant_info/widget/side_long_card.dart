@@ -19,8 +19,8 @@ class SideLongCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: double.infinity, // Lebar penuh atau bisa diset fixed
-        height: 100, // Tinggi card
+        width: double.infinity, 
+        height: 100, 
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -52,9 +52,9 @@ class SideLongCard extends StatelessWidget {
                 ),
                 child: Image.network(
                   imageUrl,
-                  fit: BoxFit.cover, // biar gambar menutup penuh
-                  width: double.infinity, // isi penuh lebar card
-                  height: double.infinity, // isi penuh tinggi Expanded flex
+                  fit: BoxFit.cover, 
+                  width: double.infinity, 
+                  height: double.infinity, 
                   errorBuilder: (context, error, stackTrace) {
                     return const Center(
                       child: Icon(Icons.broken_image, size: 40),

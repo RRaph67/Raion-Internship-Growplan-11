@@ -49,7 +49,6 @@ class ProfileCubit extends Cubit<ProfileState> {
         UserAttributes(data: {'avatar_url': publicUrl}),
       );
 
-      // ✅ Refresh auth state agar AuthCubit update
       await supabase.auth.refreshSession();
 
       emit(ProfilePhotoUpdated(publicUrl));
