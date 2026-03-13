@@ -6,7 +6,6 @@ import 'package:flutter_application_1/presentation/home/widgets/appbar_widget.da
 import 'package:flutter_application_1/presentation/home/widgets/bottom_navigation.dart';
 import 'package:flutter_application_1/presentation/plant_info/pages/main_plant_page.dart';
 import 'package:flutter_application_1/presentation/plant_info/widget/simple_appbar.dart';
-import 'package:flutter_application_1/presentation/profile/cubit/profile_cubit.dart';
 import 'package:flutter_application_1/presentation/profile/pages/profil_kosong.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

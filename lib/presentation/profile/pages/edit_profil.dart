@@ -1,8 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_application_1/presentation/profile/cubit/profile_cubit.dart';
+import 'package:flutter_application_1/presentation/profile/widgets/round_icon_button.dart';
+import 'package:flutter_application_1/presentation/profile/widgets/rounded_field.dart';
 
 class EditProfil extends StatefulWidget {
   const EditProfil({super.key});
@@ -15,10 +16,7 @@ class _EditProfilState extends State<EditProfil> {
   final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
 
-  final _supabase = Supabase.instance.client;
-
   String? _photoUrl;
-  File? _localPhoto;
   bool _saving = false;
 
   @override
@@ -28,67 +26,26 @@ class _EditProfilState extends State<EditProfil> {
   }
 
   void _loadUser() {
-    final user = _supabase.auth.currentUser;
-    if (user == null) return;
-
-    final data = user.userMetadata ?? {};
-    _nameController.text = (data['name'] ?? 'John Doe').toString();
-    _usernameController.text = (data['username'] ?? '@johndoe123').toString();
-    _photoUrl = data['avatar_url']?.toString();
-
+    final data = context.read<ProfileCubit>().getCurrentProfile();
+    _nameController.text = data.name;
+    _usernameController.text = data.username;
+    _photoUrl = data.photoUrl;
     setState(() {});
   }
 
   Future<void> _pickPhoto() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 75);
-    if (picked == null) return;
-
-    setState(() {
-      _localPhoto = File(picked.path);
-    });
-
-    // Upload ke Supabase
-    final user = _supabase.auth.currentUser;
-    if (user == null) return;
-
-    final ext = picked.path.split('.').last;
-    final filePath = '${user.id}/avatar.$ext';
-
-    await _supabase.storage
-        .from('avatar')
-        .upload(filePath, _localPhoto!, fileOptions: const FileOptions(upsert: true));
-
-    final publicUrl = _supabase.storage.from('avatar').getPublicUrl(filePath);
-
-    await _supabase.auth.updateUser(
-      UserAttributes(data: {'avatar_url': publicUrl}),
-    );
-
-    setState(() {
-      _photoUrl = publicUrl;
-    });
+    context.read<ProfileCubit>().updateProfilePhoto(
+          source: ImageSource.gallery,
+        );
   }
 
   Future<void> _saveProfile() async {
-    final user = _supabase.auth.currentUser;
-    if (user == null) return;
-
     setState(() => _saving = true);
-
-    await _supabase.auth.updateUser(
-      UserAttributes(
-        data: {
-          'name': _nameController.text.trim(),
-          'username': _usernameController.text.trim(),
-          if (_photoUrl != null) 'avatar_url': _photoUrl,
-        },
-      ),
-    );
-
-    setState(() => _saving = false);
-    if (!mounted) return;
-    Navigator.pop(context, true); // balik ke profil_kosong
+    context.read<ProfileCubit>().updateProfile(
+          name: _nameController.text.trim(),
+          username: _usernameController.text.trim(),
+          photoUrl: _photoUrl,
+        );
   }
 
   @override
@@ -102,16 +59,32 @@ class _EditProfilState extends State<EditProfil> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+      body: BlocListener<ProfileCubit, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfilePhotoUpdated) {
+            setState(() => _photoUrl = state.photoUrl);
+          } else if (state is ProfileSaved) {
+            setState(() => _saving = false);
+            Navigator.pop(context, true);
+          } else if (state is ProfileError) {
+            setState(() => _saving = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal: ${state.message}')),
+            );
+          } else if (state is ProfileLoading) {
+            setState(() => _saving = true);
+          }
+        },
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
               // Top Bar
               Row(
                 children: [
-                  _RoundIconButton(
+                  RoundIconButton(
                     icon: Icons.arrow_back,
                     onTap: () => Navigator.pop(context),
                   ),
@@ -141,12 +114,9 @@ class _EditProfilState extends State<EditProfil> {
                     child: CircleAvatar(
                       radius: 40,
                       backgroundColor: const Color(0xFFE8F1E1),
-                      backgroundImage: _localPhoto != null
-                          ? FileImage(_localPhoto!)
-                          : (_photoUrl != null
-                              ? NetworkImage(_photoUrl!)
-                              : const AssetImage('assets/icons/home/Logo avatar kamera.png')
-                                  as ImageProvider),
+                      backgroundImage: _photoUrl != null
+                          ? NetworkImage(_photoUrl!)
+                          : const AssetImage('assets/icons/home/Logo avatar kamera.png'),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -178,7 +148,7 @@ class _EditProfilState extends State<EditProfil> {
                 ),
               ),
               const SizedBox(height: 8),
-              _RoundedField(controller: _nameController),
+              RoundedField(controller: _nameController),
 
               const SizedBox(height: 18),
 
@@ -195,7 +165,7 @@ class _EditProfilState extends State<EditProfil> {
                 ),
               ),
               const SizedBox(height: 8),
-              _RoundedField(controller: _usernameController),
+              RoundedField(controller: _usernameController),
 
               const SizedBox(height: 20),
               if (_saving) const CircularProgressIndicator(),
@@ -203,60 +173,8 @@ class _EditProfilState extends State<EditProfil> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _RoundedField extends StatelessWidget {
-  final TextEditingController controller;
-  const _RoundedField({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 48,
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      alignment: Alignment.centerLeft,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFF25410E), width: 1),
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: TextField(
-        controller: controller,
-        decoration: const InputDecoration(
-          border: InputBorder.none,
-        ),
-        style: const TextStyle(
-          color: Color(0xFF6ABA27),
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-        ),
       ),
     );
   }
 }
 
-class _RoundIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  const _RoundIconButton({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(999),
-      onTap: onTap,
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: const BoxDecoration(
-          color: Color(0xFFF0F8E9),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, size: 18, color: Color(0xFF25410E)),
-      ),
-    );
-  }
-}

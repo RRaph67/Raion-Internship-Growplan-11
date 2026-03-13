@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/theme/app_text.dart';
 import 'package:flutter_application_1/presentation/profile/pages/edit_profil.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_application_1/presentation/profile/pages/setting.dart';
+import 'package:flutter_application_1/presentation/profile/widgets/profile_header.dart';
+import 'package:flutter_application_1/presentation/profile/widgets/profile_stat_row.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_application_1/presentation/profile/cubit/profile_cubit.dart';
 
 class ProfileEmptyPage extends StatefulWidget {
   const ProfileEmptyPage({super.key});
@@ -12,8 +15,6 @@ class ProfileEmptyPage extends StatefulWidget {
 }
 
 class _ProfileEmptyPageState extends State<ProfileEmptyPage> {
-  final _supabase = Supabase.instance.client;
-
   String _name = 'John Doe';
   String _username = '@johndoe123';
   String? _photoUrl;
@@ -25,14 +26,11 @@ class _ProfileEmptyPageState extends State<ProfileEmptyPage> {
   }
 
   void _loadUser() {
-    final user = _supabase.auth.currentUser;
-    if (user == null) return;
-
-    final data = user.userMetadata ?? {};
+    final data = context.read<ProfileCubit>().getCurrentProfile();
     setState(() {
-      _name = (data['name'] ?? 'John Doe').toString();
-      _username = (data['username'] ?? '@johndoe123').toString();
-      _photoUrl = data['avatar_url']?.toString();
+      _name = data.name;
+      _username = data.username;
+      _photoUrl = data.photoUrl;
     });
   }
 
@@ -124,70 +122,12 @@ class _ProfileEmptyPageState extends State<ProfileEmptyPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 28 * profileScale,
-                      backgroundColor: const Color(0xFF4E8C2B),
-                      backgroundImage: _photoUrl != null
-                          ? NetworkImage(_photoUrl!)
-                          : null,
-                      child: _photoUrl == null
-                          ? const Icon(Icons.person, color: Colors.white)
-                          : null,
-                    ),
-                    SizedBox(width: 12 * profileScale),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _name,
-                          style: AppText.semiBold14.copyWith(
-                            fontSize: 15 * profileScale,
-                          ),
-                        ),
-                        SizedBox(height: 2 * profileScale),
-                        Text(
-                          _username,
-                          style: AppText.medium12.copyWith(
-                            color: Colors.black54,
-                            fontSize: 12 * profileScale,
-                          ),
-                        ),
-                        SizedBox(height: 6 * profileScale),
-                        SizedBox(
-                          height: 25 * profileScale,
-                          child: ElevatedButton.icon(
-                            onPressed: _goToEdit,
-                            icon: Icon(Icons.edit, size: 18 * profileScale),
-                            label: Text(
-                              'Edit Profil',
-                              style: AppText.medium12.copyWith(
-                                fontSize: 13 * profileScale,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(
-                                255,
-                                80,
-                                140,
-                                29,
-                              ),
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 15 * profileScale,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                ProfileHeader(
+                  name: _name,
+                  username: _username,
+                  photoUrl: _photoUrl,
+                  profileScale: profileScale,
+                  onEditTap: _goToEdit,
                 ),
                 const SizedBox(height: 18),
                 Text(
@@ -204,24 +144,7 @@ class _ProfileEmptyPageState extends State<ProfileEmptyPage> {
           Positioned(
             left: 18 * scale,
             top: 160 * scale,
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.menu_book_outlined,
-                  size: 18,
-                  color: Color(0xFF4E8C2B),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '0 Postingan',
-                  style: AppText.medium12.copyWith(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
+            child: const ProfileStatRow(label: '0 Postingan'),
           ),
 
           Positioned(
