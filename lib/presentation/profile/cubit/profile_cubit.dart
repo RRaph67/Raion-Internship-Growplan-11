@@ -10,6 +10,8 @@ class ProfileInitial extends ProfileState {}
 
 class ProfileLoading extends ProfileState {}
 
+class ProfileSaved extends ProfileState {}
+
 class ProfilePhotoUpdated extends ProfileState {
   final String photoUrl;
   ProfilePhotoUpdated(this.photoUrl);
@@ -24,6 +26,24 @@ class ProfileCubit extends Cubit<ProfileState> {
   final SupabaseClient supabase;
 
   ProfileCubit(this.supabase) : super(ProfileInitial());
+
+  ProfileData getCurrentProfile() {
+    final user = supabase.auth.currentUser;
+    if (user == null) {
+      return const ProfileData(
+        name: 'John Doe',
+        username: '@johndoe123',
+        photoUrl: null,
+      );
+    }
+
+    final data = user.userMetadata ?? {};
+    return ProfileData(
+      name: (data['name'] ?? 'John Doe').toString(),
+      username: (data['username'] ?? '@johndoe123').toString(),
+      photoUrl: data['avatar_url']?.toString(),
+    );
+  }
 
   Future<void> updateProfilePhoto({required ImageSource source}) async {
     try {
@@ -54,4 +74,38 @@ class ProfileCubit extends Cubit<ProfileState> {
       emit(ProfileError(err.toString()));
     }
   }
+
+  Future<void> updateProfile({
+    required String name,
+    required String username,
+    String? photoUrl,
+  }) async {
+    try {
+      emit(ProfileLoading());
+      await supabase.auth.updateUser(
+        UserAttributes(
+          data: {
+            'name': name,
+            'username': username,
+            if (photoUrl != null) 'avatar_url': photoUrl,
+          },
+        ),
+      );
+      emit(ProfileSaved());
+    } catch (err) {
+      emit(ProfileError(err.toString()));
+    }
+  }
+}
+
+class ProfileData {
+  final String name;
+  final String username;
+  final String? photoUrl;
+
+  const ProfileData({
+    required this.name,
+    required this.username,
+    required this.photoUrl,
+  });
 }
