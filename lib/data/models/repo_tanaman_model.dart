@@ -4,14 +4,14 @@ class RepoTanamanModel {
   final String namaStatis;
   final String? namaIlmiah;
   final String jenisTanaman;
-  final List<String>? persiapan; // Ubah ke List<String>
-  final List<String>? perawatan; // Ubah ke List<String>
+  final List<String>? persiapan;
+  final List<String>? perawatan;
   final String? ringkasan;
-  final List<String>? penyakit; // Tambah
-  final List<String>? panduan; // Tambah
-  final List<String>? namaPenyakit; // Tambah
-  final String? imageUrl; // Tambah
-  final DateTime? createdAt; // Tambah
+  final List<String>? penyakit;
+  final List<String>? panduan; 
+  final List<String>? namaPenyakit;
+  final String? imageUrl;
+  final DateTime? createdAt; 
 
   RepoTanamanModel({
     required this.id,
@@ -29,7 +29,7 @@ class RepoTanamanModel {
   });
 
   factory RepoTanamanModel.fromMap(Map<String, dynamic> map) {
-    // Helper function untuk convert List<String>
+
     List<String>? convertList(dynamic data) {
       if (data == null) return null;
       if (data is List) return data.cast<String>();
@@ -37,7 +37,7 @@ class RepoTanamanModel {
       return [data.toString()];
     }
 
-    // Helper untuk String (handle List jadi String pertama)
+
     String convertString(dynamic data) {
       if (data == null) return '';
       if (data is String) return data.trim();

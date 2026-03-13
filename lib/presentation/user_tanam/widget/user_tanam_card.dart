@@ -95,7 +95,7 @@ class UserTanamCard extends StatelessWidget {
   }
 
   Widget _buildImage(BuildContext context) {
-    // ✅ Validasi URL lebih ketat
+
     if (imageUrl == null ||
         imageUrl!.isEmpty ||
         imageUrl!.startsWith('file://') ||

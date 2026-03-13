@@ -45,7 +45,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
         ],
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, // Menghindari overflow vertikal
+        mainAxisSize: MainAxisSize.min, 
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
@@ -58,7 +58,6 @@ class _TodoListWidgetState extends State<TodoListWidget> {
           ),
           const SizedBox(height: 16),
           
-          // Menggunakan Row dengan Expanded agar responsif di berbagai lebar layar
           Row(
             children: [
               Expanded(
@@ -95,7 +94,7 @@ class _TodoListWidgetState extends State<TodoListWidget> {
               separatorBuilder: (context, index) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final todo = filteredTodos[index];
-                // Logika status: sesuaikan dengan field di model Anda
+
                 final isCompleted = todo.status.contains('completed');
                 
                 return AnimatedOpacity(
