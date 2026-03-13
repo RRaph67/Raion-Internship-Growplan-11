@@ -48,7 +48,6 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       await _client.auth.refreshSession();
     } catch (e) {
-      // Ignore error, onAuthStateChange will handle it
     }
   }
 

@@ -11,52 +11,59 @@ class RingkasanWidget extends StatelessWidget {
       children: [
         Container(
           width: 388,
-          height: 120,
+          // Menghapus 'height: 120' agar container menyesuaikan tinggi konten secara otomatis
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           decoration: ShapeDecoration(
             color: Colors.white,
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: const Color(0xFFE2E2E2)),
+              side: const BorderSide(width: 1, color: Color(0xFFE2E2E2)),
               borderRadius: BorderRadius.circular(20),
             ),
+            shadows: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize
+                .min, // Memastikan column hanya memakan ruang sekecil mungkin
             children: [
               Row(
                 children: [
-                  Container(
-                    child: Image.asset('assets/icons/detail_plant/ringkas.png',width: 24, height: 24,),
+                  Image.asset(
+                    'assets/icons/detail_plant/ringkas.png',
+                    width: 24,
+                    height: 24,
                   ),
-                  SizedBox(
-                    width: 116,
-                    child: Text(
-                      'Ringkasan',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: const Color(0xFF508C1D),
-                        fontSize: 20,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w800,
-                        height: 1.20,
-                      ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Ringkasan',
+                    style: TextStyle(
+                      color: Color(0xFF508C1D),
+                      fontSize: 20,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w800,
+                      height: 1.20,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 16,),
-              SizedBox(
-                width: 348,
-                child: Text(
-                  ringkasan, // <-- value dari Supabase
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                    color: const Color(0xFF383838),
-                    fontSize: 12,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w400,
-                    height: 1.20,
-                  ),
+              const SizedBox(
+                height: 12,
+              ), // Jarak rapat sesuai preferensi desain sebelumnya
+              Text(
+                ringkasan,
+                textAlign: TextAlign.justify,
+                style: const TextStyle(
+                  color: Color(0xFF383838),
+                  fontSize: 12,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w400,
+                  height: 1.4, // Menambah line height agar lebih nyaman dibaca
                 ),
               ),
             ],

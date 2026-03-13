@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Konstanta warna agar mudah diubah dan konsisten
+// Konstanta warna agar konsisten dengan widget lainnya
 class AppColors {
   static const Color primaryGreen = Color(0xFF508C1D);
   static const Color lightGreenBg = Color(0xFFF0F8E9);
@@ -24,7 +24,7 @@ class PersiapanWidget extends StatelessWidget {
           decoration: ShapeDecoration(
             color: Colors.white,
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: AppColors.borderColor),
+              side: const BorderSide(width: 1, color: AppColors.borderColor),
               borderRadius: BorderRadius.circular(20),
             ),
             shadows: [
@@ -37,18 +37,25 @@ class PersiapanWidget extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
+              // Header: Icon + Judul
               Row(
                 children: [
                   Image.asset(
                     'assets/icons/detail_plant/persiapan.png',
                     width: 24,
                     height: 24,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.assignment_outlined,
+                      color: AppColors.primaryGreen,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 8),
-                  Text(
+                  const Text(
                     'Persiapan',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.primaryGreen,
                       fontSize: 20,
                       fontFamily: 'Inter',
@@ -58,7 +65,7 @@ class PersiapanWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12), // jarak rapat
+              const SizedBox(height: 12), // Jarak rapat antara judul dan list
               _buildItemList(),
             ],
           ),
@@ -72,6 +79,7 @@ class PersiapanWidget extends StatelessWidget {
 
     return ListView.separated(
       shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: titles.length,
       separatorBuilder: (context, index) => const SizedBox(height: 8),
@@ -90,12 +98,12 @@ class PersiapanWidget extends StatelessWidget {
       decoration: ShapeDecoration(
         color: AppColors.lightGreenBg,
         shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1, color: AppColors.lightGreenBorder),
+          side: const BorderSide(width: 1, color: AppColors.lightGreenBorder),
           borderRadius: BorderRadius.circular(12),
         ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center, // sejajarkan icon & teks
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             width: 28,

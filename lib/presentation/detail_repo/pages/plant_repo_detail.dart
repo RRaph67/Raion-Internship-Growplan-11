@@ -175,7 +175,7 @@ class _PlantRepoDetailState extends State<PlantRepoDetail> {
                       child: const Icon(
                         Icons.arrow_back,
                         size: 18,
-                        color: Colors.black87,
+                        color:  Color(0xff305412),
                       ),
                     ),
                   ),
@@ -276,66 +276,13 @@ Widget _buildLabel(String text, {TextStyle? style}) {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppPallete.primaryDark, width: 1.5),
+        border: Border.all(color: AppPallete.primaryDark, width: 1),
       ),
       child: Text(
         text,
         style:
             style ??
             const TextStyle(color: AppPallete.primaryDark, fontSize: 12),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: Colors.black87,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailCard({
-    required IconData icon,
-    required String title,
-    required String content,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.green[700]),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  content,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

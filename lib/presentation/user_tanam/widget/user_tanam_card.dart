@@ -1,7 +1,8 @@
+// File: lib/presentation/user_tanam/widget/user_tanam_card.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class UserTanamCard extends StatelessWidget {
+  final int id;
   final String? imageUrl;
   final String namaTanam;
   final String tanggalTanam;
@@ -9,6 +10,7 @@ class UserTanamCard extends StatelessWidget {
 
   const UserTanamCard({
     super.key,
+    required this.id,
     required this.namaTanam,
     required this.tanggalTanam,
     this.imageUrl,
@@ -27,7 +29,7 @@ class UserTanamCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withOpacity(0.3),
               spreadRadius: 2,
               blurRadius: 5,
               offset: const Offset(0, 3),
@@ -45,8 +47,8 @@ class UserTanamCard extends StatelessWidget {
                 ),
                 child: Container(
                   margin: const EdgeInsets.all(16),
-                 child: _buildImage(context),
-                )
+                  child: _buildImage(context),
+                ),
               ),
             ),
             Expanded(
@@ -93,15 +95,16 @@ class UserTanamCard extends StatelessWidget {
   }
 
   Widget _buildImage(BuildContext context) {
-    // Cek apakah imageUrl valid (bukan null dan bukan string kosong)
-    if (imageUrl == null || imageUrl!.isEmpty) {
-      debugPrint("UserTanamCard - No image available");
+    // ✅ Validasi URL lebih ketat
+    if (imageUrl == null ||
+        imageUrl!.isEmpty ||
+        imageUrl!.startsWith('file://') ||
+        !imageUrl!.startsWith('http://') && !imageUrl!.startsWith('https://')) {
       return const Center(
         child: Icon(Icons.local_florist, size: 80, color: Colors.green),
       );
     }
 
-    // Coba load gambar
     return Image.network(
       imageUrl!,
       fit: BoxFit.cover,
@@ -119,7 +122,6 @@ class UserTanamCard extends StatelessWidget {
         );
       },
       errorBuilder: (context, error, stackTrace) {
-        debugPrint("UserTanamCard - Image load error: $error");
         return const Center(
           child: Icon(Icons.broken_image, size: 40, color: Colors.grey),
         );

@@ -1,3 +1,4 @@
+// File: lib/presentation/home/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/theme/app_pallete.dart';
 import 'package:flutter_application_1/presentation/auth/cubit/auth_cubit.dart';
@@ -16,8 +17,6 @@ import 'package:flutter_application_1/presentation/user_tanam/widget/user_tanam_
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthState;
 
-// ... (imports tetap sama)
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -25,7 +24,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int myIndex = 0;
   final supabase = Supabase.instance.client;
   String? _username;
@@ -34,12 +33,31 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    // ✅ Perbaikan 1: Tambahkan observer tanpa cast
+    WidgetsBinding.instance.addObserver(this);
     context.read<UserTanamCubit>().fetchUserTanamList();
     final state = context.read<AuthCubit>().state;
     if (state is AuthSuccess) {
       _getUserInfo();
       _currentPhotoUrl = state.user.fotoProfil!;
     }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // ✅ Perbaikan 2: Cek mounted sebelum gunakan context
+      if (mounted) {
+        context.read<UserTanamCubit>().fetchUserTanamList();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    // ✅ Perbaikan 3: Hapus observer
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   void _getUserInfo() {
@@ -58,7 +76,7 @@ class _HomePageState extends State<HomePage> {
         if (state is UserTanamLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is UserTanamListLoaded) {
-          final list = state.userTanamList;
+          final list = state.list;
           if (list.isEmpty) {
             return Center(
               child: Column(
@@ -91,15 +109,15 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) {
               final item = list[index];
               return UserTanamCard(
-                namaTanam: item['nama_tanam'] ?? '',
-                tanggalTanam: item['tanggal_tanam'] ?? '',
-                imageUrl: item['image_url'],
+                id: item.id,
+                namaTanam: item.namaTanam,
+                tanggalTanam: item.tanggalTanam.toIso8601String(),
+                imageUrl: item.imageUrl,
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) =>
-                          UserTanamDetailPage(userTanamId: item['id']),
+                      builder: (_) => UserTanamDetailPage(userTanamId: item.id),
                     ),
                   );
                 },
@@ -138,21 +156,19 @@ class _HomePageState extends State<HomePage> {
             );
           },
           rightIconPath: 'assets/icons/home/notifications.png',
-          showBackButton: false, // Home tetap false
+          showBackButton: false,
         );
 
       case 1:
         return SimpleAppBar(
           title: "Discovery",
           showBackButton: true,
-          // ✅ Klik back di tab Discovery akan memindahkan user ke tab Home
           onBackTap: () => setState(() => myIndex = 0),
         );
       case 2:
         return SimpleAppBar(
           title: "Plant Info",
           showBackButton: true,
-          // ✅ Klik back di tab Plant Info akan memindahkan user ke tab Home
           onBackTap: () => setState(() => myIndex = 0),
         );
       default:
@@ -186,7 +202,10 @@ class _HomePageState extends State<HomePage> {
                   context,
                   MaterialPageRoute(builder: (_) => const AddUserTanamPage()),
                 );
-                context.read<UserTanamCubit>().fetchUserTanamList();
+                // ✅ Perbaikan 4: Cek mounted sebelum gunakan context
+                if (mounted) {
+                  context.read<UserTanamCubit>().fetchUserTanamList();
+                }
               },
               backgroundColor: AppPallete.primaryNormal,
               elevation: 4,

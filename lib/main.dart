@@ -17,16 +17,7 @@ Future<void> main() async {
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrbGl1cHB4Y3JsaHZqdnluanpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5MTgwMzcsImV4cCI6MjA4NzQ5NDAzN30.3jNNWW8-3G0dl7f8222jqqef-7QXUk-wdWldqhMWegM',
   );
 
-runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => AuthCubit()),
-        BlocProvider(create: (_) => ProfileCubit(Supabase.instance.client)),
-        BlocProvider(create: (_) => UserTanamCubit()),
-      ],
-      child: const MyApp(),
-    ),
-  );
+runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -34,23 +25,30 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          surfaceTintColor: Colors.transparent,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => AuthCubit()),
+        BlocProvider(create: (_) => ProfileCubit(Supabase.instance.client)),
+        BlocProvider(create: (_) => UserTanamCubit(Supabase.instance.client)),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+          ),
         ),
+        title: 'GrowPlan',
+        initialRoute: '/login',
+        routes: {
+          '/login': (context) => const LogIn(),
+          '/regis': (context) => const SignUp(),
+          '/home': (context) => const HomePage(),
+          '/forgot': (context) => const ForgotPasswordPage(),
+        },
       ),
-      title: 'GrowPlan',
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => const LogIn(),
-        '/regis': (context) => const SignUp(),
-        '/home': (context) => const HomePage(),
-        '/forgot': (context) => const ForgotPasswordPage(),
-      },
     );
   }
 }

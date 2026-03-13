@@ -1,184 +1,76 @@
-// File: lib/cubit/user_tanam_cubit.dart
+import 'package:flutter_application_1/presentation/user_tanam/cubit/user_tanam_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'user_tanam_state.dart';
+import 'package:flutter_application_1/data/models/user_tanam_model.dart';
 
 class UserTanamCubit extends Cubit<UserTanamState> {
-  UserTanamCubit() : super(UserTanamInitial());
+  final SupabaseClient _supabase;
 
-  final supabase = Supabase.instance.client;
+  // Simpan list secara lokal agar tidak hilang saat pindah state ke detail
+  List<UserTanamModel> _cachedList = [];
 
-  Future<void> fetchUserTanamDetail(int userTanamId) async {
+  UserTanamCubit(this._supabase) : super(UserTanamInitial());
+
+  void resetState() {
+    emit(UserTanamInitial());
+  }
+
+  // Method Load Detail Tanaman (untuk Detail Page)
+  Future<void> loadPlantInfo(String userId, int userTanamId) async {
+    // Jangan emit loading global jika kita ingin mempertahankan list di background,
+    // tapi karena Detail Page butuh feedback, kita tetap emit.
+    // Solusinya adalah UI Home harus memanggil fetch lagi jika state bukan ListLoaded.
     emit(UserTanamLoading());
+
     try {
-      final response = await supabase
+      final response = await _supabase
           .from('user_tanam')
-          .select('''
-          id, nama_tanam, tanggal_tanam, image_url,
-          repo_tanaman(nama_statis, nama_ilmiah, jenis_tanaman, persiapan, perawatan, ringkasan),
-          todo_tanam(id, nama_todo, tanggal_todo, jam_todo, status, complete_at)
-          ''')
+          .select('*, repo_tanaman(*)')
           .eq('id', userTanamId)
-          .single();
+          .eq('user_id', userId)
+          .maybeSingle();
 
-      print("=== DATA USER TANAM DETAIL ===");
-      print("Repo Tanaman: ${response['repo_tanaman']}");
-      print("Todo Tanam: ${response['todo_tanam']}");
-
-      // Extract data dari nested object
-      final repoTanaman = response['repo_tanaman'] as Map<String, dynamic>?;
-      final todoTanamRaw = response['todo_tanam'] as List<dynamic>? ?? [];
-
-      // ✅ PERBAIKAN: Konversi semua List ke List<String> SEBELUM emit
-      final List<String> persiapan =
-          (repoTanaman?['persiapan'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .cast<String>()
-              .toList() ??
-          [];
-
-      final List<String> perawatan =
-          (repoTanaman?['perawatan'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .cast<String>()
-              .toList() ??
-          [];
-
-      final List<String> jenisTanaman =
-          (repoTanaman?['jenis_tanaman'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .cast<String>()
-              .toList() ??
-          [];
-
-      // Convert todo_tanam ke List<Map<String, dynamic>>
-      final List<Map<String, dynamic>> todoTanam = todoTanamRaw
-          .map((todo) => Map<String, dynamic>.from(todo))
-          .toList();
-
-      // Buat map data dengan tipe yang sudah dikonversi
-      final plantData = <String, dynamic>{
-        'id': response['id'],
-        'nama_tanam': response['nama_tanam'] ?? 'Tanaman Tanpa Nama',
-        'tanggal_tanam': response['tanggal_tanam'] ?? '',
-        'image_url': response['image_url'] ?? '',
-        'nama_statis': repoTanaman?['nama_statis'] ?? 'Tanaman Tanpa Nama',
-        'nama_ilmiah': repoTanaman?['nama_ilmiah'] ?? '',
-        'jenis_tanaman': jenisTanaman, // ✅ List<String>
-        'persiapan': persiapan, // ✅ List<String>
-        'perawatan': perawatan, // ✅ List<String>
-        'ringkasan': repoTanaman?['ringkasan'] ?? '',
-        'todo_tanam': todoTanam, // ✅ Tambahkan todo_tanam
-        // Pre-process untuk widget
-        'media_tanam': persiapan.length > 0 ? persiapan[0] : 'Belum ada data',
-        'cahaya': persiapan.length > 1 ? persiapan[1] : 'Belum ada data',
-        'suhu': persiapan.length > 2 ? persiapan[2] : 'Belum ada data',
-        'air': perawatan.length > 0 ? perawatan[0] : 'Belum ada data',
-        'pupuk': perawatan.length > 1 ? perawatan[1] : 'Belum ada data',
-      };
-
-      print("Persiapan: $persiapan");
-      print("Perawatan: $perawatan");
-      print("Todo Tanam: $todoTanam");
-      print("Jenis Tanaman: $jenisTanaman");
-
-      emit(UserTanamDetailLoaded(plantData));
-    } catch (e) {
-      print("Error fetch detail: $e");
-      emit(UserTanamError(e.toString()));
-    }
-  }
-
-  Future<void> toggleTodoStatus(int index) async {
-    try {
-      if (state is UserTanamDetailLoaded) {
-        final currentState = state as UserTanamDetailLoaded;
-        final detail = Map<String, dynamic>.from(currentState.detail);
-
-        final todosRaw = detail['todo_tanam'] as List<dynamic>? ?? [];
-        final todos = List<Map<String, dynamic>>.from(todosRaw);
-
-        if (index < 0 || index >= todos.length) {
-          emit(UserTanamError("Index todo tidak valid"));
-          return;
-        }
-
-        final todo = todos[index];
-        final statusRaw = todo['status'] as List<dynamic>? ?? [];
-        final status = statusRaw.map((e) => e.toString()).toList();
-
-        final isDone = status.contains('done');
-        final newStatus = isDone ? ['pending'] : ['done'];
-
-        todo['status'] = newStatus;
-        todos[index] = todo;
-        detail['todo_tanam'] = todos;
-
-        await supabase
-            .from('todo_tanam')
-            .update({'status': newStatus})
-            .eq('id', todo['id']);
-
-        emit(UserTanamDetailLoaded(detail));
-      }
-    } catch (e) {
-      print("Error toggle status: $e");
-      emit(UserTanamError("Gagal update status: ${e.toString()}"));
-    }
-  }
-
-  Future<void> fetchJenisTanaman() async {
-    emit(RepoTanamanLoading());
-    try {
-      final response = await supabase
-          .from('repo_tanaman')
-          .select('jenis_tanaman')
-          .order('jenis_tanaman', ascending: true);
-
-      final allJenis = <String>{};
-      for (var row in response) {
-        final List<dynamic>? jenisList = row['jenis_tanaman'];
-        if (jenisList != null) {
-          allJenis.addAll(jenisList.map((e) => e.toString()));
-        }
+      if (response == null) {
+        emit(UserTanamError('Plant not found'));
+        return;
       }
 
-      emit(JenisTanamanLoaded(allJenis.toList()));
+      final model = UserTanamModel.fromMap(response);
+      final now = DateTime.now();
+      final plantedDate = model.tanggalTanam;
+      final days = now.difference(plantedDate).inDays;
+
+      emit(UserTanamLoaded(model, days));
     } catch (e) {
       emit(UserTanamError(e.toString()));
     }
   }
 
-  Future<void> fetchRepoTanaman() async {
-    emit(RepoTanamanLoading());
-    try {
-      final response = await supabase
-          .from('repo_tanaman')
-          .select('id, nama_statis, jenis_tanaman');
-      emit(RepoTanamanLoaded(response));
-    } catch (e) {
-      emit(UserTanamError(e.toString()));
-    }
-  }
-
+  // Method Load List Tanaman (untuk HomePage)
   Future<void> fetchUserTanamList() async {
     emit(UserTanamLoading());
     try {
-      final userId = supabase.auth.currentUser!.id;
+      final currentUserId = _supabase.auth.currentUser?.id ?? '';
 
-      final response = await supabase
+      final response = await _supabase
           .from('user_tanam')
-          .select(
-            'id, nama_tanam, tanggal_tanam, image_url, repo_tanaman(nama_statis, jenis_tanaman)',
-          )
-          .eq('user_id', userId);
+          .select('*, repo_tanaman(*)')
+          .eq('user_id', currentUserId)
+          .order('created_at', ascending: false);
 
-      print("=== DATA USER TANAM LIST ===");
-      print("Response: $response");
-
-      emit(UserTanamListLoaded(response));
+      _cachedList = response.map((e) => UserTanamModel.fromMap(e)).toList();
+      emit(UserTanamListLoaded(_cachedList));
     } catch (e) {
       emit(UserTanamError(e.toString()));
+    }
+  }
+
+  // Tambahkan method ini untuk mengembalikan state ke list tanpa fetch ulang jika sudah ada cache
+  void restoreList() {
+    if (_cachedList.isNotEmpty) {
+      emit(UserTanamListLoaded(_cachedList));
+    } else {
+      fetchUserTanamList();
     }
   }
 
@@ -186,55 +78,41 @@ class UserTanamCubit extends Cubit<UserTanamState> {
     required String namaTanam,
     required DateTime tanggalTanam,
     required String jenisTanaman,
-    required String? imageUrl,
+    required String imageUrl,
   }) async {
     emit(UserTanamLoading());
     try {
-      final userId = supabase.auth.currentUser!.id;
-
-      final repo = await supabase
+      final repoResponse = await _supabase
           .from('repo_tanaman')
           .select('id')
-          .contains('jenis_tanaman', [jenisTanaman])
-          .limit(1)
-          .single();
+          .eq('jenis_tanaman', jenisTanaman)
+          .maybeSingle();
 
-      final repoId = repo['id'];
+      if (repoResponse == null) {
+        emit(UserTanamError('Jenis tanaman tidak ditemukan di database'));
+        return;
+      }
 
-      final inserted = await supabase
+      final repoTanamanId = repoResponse['id'] as int;
+
+      final insertData = {
+        'user_id': _supabase.auth.currentUser?.id ?? '',
+        'repo_tanaman_id': repoTanamanId,
+        'nama_tanam': namaTanam,
+        'tanggal_tanam': tanggalTanam.toIso8601String().split('T')[0],
+        'image_url': imageUrl,
+      };
+
+      final insertResponse = await _supabase
           .from('user_tanam')
-          .insert({
-            'user_id': userId,
-            'repo_tanaman_id': repoId,
-            'nama_tanam': namaTanam,
-            'tanggal_tanam': tanggalTanam.toIso8601String(),
-            'image_url': imageUrl,
-          })
+          .insert(insertData)
           .select()
           .single();
 
-      final userTanamId = inserted['id'];
-
-      final todos = [
-        {
-          'user_tanam_id': userTanamId,
-          'nama_todo': 'Siram tanaman pagi',
-          'tanggal_todo': tanggalTanam.toIso8601String(),
-          'jam_todo': '07:00',
-          'status': ['pending'],
-        },
-        {
-          'user_tanam_id': userTanamId,
-          'nama_todo': 'Siram tanaman sore',
-          'tanggal_todo': tanggalTanam.toIso8601String(),
-          'jam_todo': '16:00',
-          'status': ['pending'],
-        },
-      ];
-
-      await supabase.from('todo_tanam').insert(todos);
-
-      emit(UserTanamSuccess(userTanamId));
+      final newId = insertResponse['id'] as int;
+      emit(UserTanamSuccess(newId));
+      // Refresh list setelah tambah
+      fetchUserTanamList();
     } catch (e) {
       emit(UserTanamError(e.toString()));
     }

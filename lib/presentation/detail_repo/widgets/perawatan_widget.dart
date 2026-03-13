@@ -1,5 +1,13 @@
-// File: lib/presentation/detail_repo/widgets/perawatan_widget.dart
 import 'package:flutter/material.dart';
+
+// Konstanta warna agar konsisten dengan widget lainnya
+class AppColors {
+  static const Color primaryGreen = Color(0xFF508C1D);
+  static const Color lightGreenBg = Color(0xFFF0F8E9);
+  static const Color lightGreenBorder = Color(0xFFD1EABC);
+  static const Color borderColor = Color(0xFFE2E2E2);
+  static const Color textColor = Color(0xFF383838);
+}
 
 class PerawatanWidget extends StatelessWidget {
   final List<String> perawatan;
@@ -8,19 +16,15 @@ class PerawatanWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // ✅ Responsif: Gunakan lebar parent, max 500px
-        final maxWidth = constraints.maxWidth;
-        final cardWidth = maxWidth > 500 ? 500.0 : maxWidth;
-
-        return Container(
-          width: cardWidth,
-          padding: const EdgeInsets.all(16),
+    return Column(
+      children: [
+        Container(
+          width: 388,
+          padding: const EdgeInsets.all(20),
           decoration: ShapeDecoration(
             color: Colors.white,
             shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: const Color(0xFFE2E2E2)),
+              side: const BorderSide(width: 1, color: AppColors.borderColor),
               borderRadius: BorderRadius.circular(20),
             ),
             shadows: [
@@ -33,65 +37,58 @@ class PerawatanWidget extends StatelessWidget {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize:
+                MainAxisSize.min, // Membuat container menciut mengikuti konten
             children: [
-              // Header
+              // Header: Icon + Judul
               Row(
                 children: [
                   Image.asset(
-                    'assets/icons/detail_plant/persiapan.png', // Pastikan path icon benar
+                    'assets/icons/detail_plant/persiapan.png',
                     width: 24,
                     height: 24,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.assignment_outlined,
+                      color: AppColors.primaryGreen,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 8),
-                  Text(
+                  const Text(
                     'Perawatan',
                     style: TextStyle(
-                      color: const Color(0xFF508C1D),
+                      color: AppColors.primaryGreen,
                       fontSize: 20,
+                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w800,
+                      height: 1.20,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-
-              // List Items
+              const SizedBox(height: 12), // Jarak rapat antara judul dan list
               _buildItemList(),
             ],
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 
-  // File: lib/presentation/detail_repo/widgets/perawatan_widget.dart
-
   Widget _buildItemList() {
-    // Judul statis sesuai urutan data di database
-    final titles = ['Air', 'Pupuk'];
-
-    // ✅ Tampilkan pesan jika data kosong
-    if (perawatan.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            'Belum ada data perawatan',
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
-          ),
-        ),
-      );
-    }
+    // Judul item disesuaikan dengan konteks perawatan (biasanya Air dan Pupuk)
+    final titles = ['Penyiraman', 'Pemupukan',];
 
     return ListView.separated(
       shrinkWrap: true,
+      padding: EdgeInsets.zero, // Hilangkan padding default listview
       physics: const NeverScrollableScrollPhysics(),
       itemCount: titles.length,
       separatorBuilder: (context, index) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
-        // ✅ Keamanan: Cek index sebelum akses data
-        final value = index < perawatan.length ? perawatan[index] : '-';
-
+        final value = index < perawatan.length
+            ? perawatan[index]
+            : 'Data tidak tersedia';
         return _buildItem(titles[index], value);
       },
     );
@@ -99,28 +96,30 @@ class PerawatanWidget extends StatelessWidget {
 
   Widget _buildItem(String title, String value) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: ShapeDecoration(
-        color: const Color(0xFFF0F8E9),
+        color: AppColors.lightGreenBg,
         shape: RoundedRectangleBorder(
-          side: BorderSide(width: 1, color: const Color(0xFFD1EABC)),
+          side: const BorderSide(width: 1, color: AppColors.lightGreenBorder),
           borderRadius: BorderRadius.circular(12),
         ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Icon Container
           Container(
-            padding: const EdgeInsets.all(8),
+            width: 28,
+            height: 28,
             decoration: BoxDecoration(
-              color: const Color(0xFF508C1D).withOpacity(0.1),
+              color: AppColors.primaryGreen.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.water_drop, // Icon berbeda untuk perawatan
-              color: const Color(0xFF508C1D),
-              size: 18,
+            child: const Center(
+              child: Icon(
+                Icons.opacity, // Icon air/perawatan
+                color: AppColors.primaryGreen,
+                size: 16,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -130,17 +129,17 @@ class PerawatanWidget extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyle(
-                    color: const Color(0xFF508C1D),
+                  style: const TextStyle(
+                    color: AppColors.primaryGreen,
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   value,
-                  style: TextStyle(
-                    color: const Color(0xFF383838),
+                  style: const TextStyle(
+                    color: AppColors.textColor,
                     fontSize: 12,
                     height: 1.4,
                   ),

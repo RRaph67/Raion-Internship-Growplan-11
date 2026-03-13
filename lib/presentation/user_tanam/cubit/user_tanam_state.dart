@@ -1,38 +1,33 @@
-  abstract class UserTanamState {}
+// File: lib/data/state/user_tanam_state.dart
+import 'package:flutter_application_1/data/models/user_tanam_model.dart';
 
-  class UserTanamInitial extends UserTanamState {}
+abstract class UserTanamState {}
 
-  class UserTanamLoading extends UserTanamState {}
+class UserTanamInitial extends UserTanamState {}
 
-  class UserTanamSuccess extends UserTanamState {
-    final int userTanamId;
-    UserTanamSuccess(this.userTanamId);
-  }
+class UserTanamLoading extends UserTanamState {}
 
-  class UserTanamError extends UserTanamState {
-    final String message;
-    UserTanamError(this.message);
-  }
+// State untuk List Tanaman (untuk HomePage)
+class UserTanamListLoaded extends UserTanamState {
+  final List<UserTanamModel> list;
 
-  class RepoTanamanLoading extends UserTanamState {}
+  UserTanamListLoaded(this.list);
+}
 
-  class RepoTanamanLoaded extends UserTanamState {
-    final List<dynamic> repoList;
-    RepoTanamanLoaded(this.repoList);
-  }
+// State untuk Detail Tanaman (untuk Detail Page)
+class UserTanamLoaded extends UserTanamState {
+  final UserTanamModel userTanam;
+  final int daysSincePlanted;
 
-  class JenisTanamanLoaded extends UserTanamState {
-    final List<String> jenisList;
-    JenisTanamanLoaded(this.jenisList);
-  }
+  UserTanamLoaded(this.userTanam, this.daysSincePlanted);
+}
 
-  class UserTanamDetailLoaded extends UserTanamState {
-    final Map<String, dynamic> detail;
-    UserTanamDetailLoaded(this.detail);
-  }
+class UserTanamSuccess extends UserTanamState {
+  final int userTanamId;
+  UserTanamSuccess(this.userTanamId);
+}
 
-  class UserTanamListLoaded extends UserTanamState {
-    final List<dynamic> userTanamList;
-    UserTanamListLoaded(this.userTanamList);
-  }
-
+class UserTanamError extends UserTanamState {
+  final String message;
+  UserTanamError(this.message);
+}

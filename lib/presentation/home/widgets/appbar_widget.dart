@@ -1,3 +1,4 @@
+// File: lib/presentation/home/widgets/appbar_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/theme/app_pallete.dart';
 
@@ -39,7 +40,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // ✅ Otomatis menyembunyikan leading jika showBackButton false
         automaticallyImplyLeading: false,
         leading: showBackButton
             ? IconButton(
@@ -47,9 +47,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 onPressed: () => Navigator.pop(context),
               )
             : null,
-        titleSpacing: showBackButton
-            ? 0
-            : 16, // Sesuaikan padding jika tidak ada back button
+        titleSpacing: showBackButton ? 0 : 16,
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -57,12 +55,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               onTap: onAvatarTap,
               child: CircleAvatar(
                 radius: 20,
-                backgroundImage: photoUrl != null
+                backgroundColor: Colors.grey[200],
+                // ✅ Validasi URL sebelum load NetworkImage
+                backgroundImage: _isValidUrl(photoUrl)
                     ? NetworkImage(photoUrl!)
                     : null,
-                child: photoUrl == null
-                    ? const Icon(Icons.person, size: 20)
-                    : null,
+                child: _isValidUrl(photoUrl)
+                    ? null
+                    : const Icon(Icons.person, size: 20),
               ),
             ),
             const SizedBox(width: 12),
@@ -114,6 +114,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
     );
+  }
+
+  // ✅ Method Validasi URL
+  bool _isValidUrl(String? url) {
+    if (url == null || url.isEmpty) return false;
+    return url.startsWith('http://') || url.startsWith('https://');
   }
 
   @override

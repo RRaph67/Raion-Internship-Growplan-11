@@ -33,7 +33,16 @@ class SimpleAppBar extends StatelessWidget implements PreferredSizeWidget {
         automaticallyImplyLeading: false,
         leading: showBackButton
             ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF0F8E9),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.arrow_back, color: Color(0xff305412), size: 24,),
+                ),
+
                 onPressed: () {
                   if (onBackTap != null) {
                     // Jika ada fungsi khusus (seperti pindah tab di HomePage), jalankan itu
@@ -49,8 +58,8 @@ class SimpleAppBar extends StatelessWidget implements PreferredSizeWidget {
           title,
           style: const TextStyle(
             fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Colors.black,
+            fontSize: 24,
+            color: Color(0xff305412),
           ),
         ),
       ),
